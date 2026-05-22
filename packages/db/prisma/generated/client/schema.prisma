@@ -1,0 +1,84 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Type {
+  LONG
+  SHORT
+}
+
+enum OrderType {
+  MARKET
+  LIMIT
+}
+
+enum Status {
+  Filled
+  PartiallyFilled
+  Cancelled
+  Open
+}
+
+model User {
+  id         String   @id @default(uuid())
+  username   String   @unique
+  password   String
+  orders     Orders[]
+  makerFills Fills[]  @relation("maker")
+  takerFills Fills[]  @relation("taker")
+}
+
+model Orders {
+  id            String    @id @default(uuid())
+  userID        String
+  author        User      @relation(fields: [userID], references: [id])
+  type          Type
+  orderType     OrderType
+  marketId      String
+  market        Markets   @relation(fields: [marketId], references: [id])
+  price         Float
+  slippage      Int
+  qty           Float
+  status        Status
+  initialMargin String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt()
+  makerFills    Fills[]   @relation("makerOrder")
+  takerFills    Fills[]   @relation("takerOrder")
+}
+
+model Markets {
+  id         String   @id @default(uuid())
+  marketSlug String
+  imageUrl   String
+  orders     Orders[]
+  fills      Fills[]
+}
+
+model Fills {
+  id           String   @id @default(uuid())
+  maker        String
+  makerUser    User     @relation("maker", fields: [maker], references: [id])
+  taker        String
+  takerUser    User     @relation("taker", fields: [taker], references: [id])
+  marketId     String
+  market       Markets  @relation(fields: [marketId], references: [id])
+  price        Float
+  qty          Float
+  makerOrderId String
+  makerOrder   Orders   @relation("makerOrder", fields: [makerOrderId], references: [id])
+  takerOrderId String
+  takerOrder   Orders   @relation("takerOrder", fields: [takerOrderId], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt()
+}
