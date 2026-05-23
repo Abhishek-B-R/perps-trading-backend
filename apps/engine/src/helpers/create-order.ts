@@ -43,6 +43,7 @@ export default async function CreateOrder(data: CreateOrderInput) {
     margin: data.equity, // update later
     orderType: data.orderType,
     price: data.price ?? 0,
+    slippage: data.slippage ?? 0,
     status: "open",
     createdAt: Date.now(),
   });

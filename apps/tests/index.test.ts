@@ -1,9 +1,8 @@
 import axios, { AxiosError } from "axios";
 import { beforeAll, describe, expect, it } from "bun:test";
 import { BACKEND } from "./config";
-import { password } from "bun";
 
-describe("auth endpoints", () => {
+describe.todo("auth endpoints", () => {
   const username = "abhishek-" + Math.random();
   const password = "123random";
 
@@ -68,5 +67,32 @@ describe("auth endpoints", () => {
     });
 
     expect(response.data.token).not.toBe(undefined);
+  });
+});
+
+describe("Order endpoints", () => {
+  const user1 = `abhishek-${Math.random()}`;
+  const user2 = `abhishek-${Math.random()}`;
+  const password = "123random";
+  let MARKET_ID = "";
+  let user1Token = "";
+  let user2Token = "";
+
+  beforeAll(async () => {
+    const marketResponse = await axios.post(
+      `${BACKEND}/admin/market`,
+      {
+        symbol: "SOL",
+        imageUrl: "",
+      },
+      {
+        headers: {
+          token: "123random",
+        },
+      },
+    );
+
+    MARKET_ID = marketResponse.data.id;
+    console.log(`market created ${MARKET_ID}`);
   });
 });

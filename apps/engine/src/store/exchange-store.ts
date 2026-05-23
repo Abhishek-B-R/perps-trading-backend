@@ -34,6 +34,7 @@ export interface Orders {
   margin: number;
   orderType: OrderType;
   price: number;
+  slippage: number;
   status: OrderStatus;
   createdAt: number;
 }

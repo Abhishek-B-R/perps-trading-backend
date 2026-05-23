@@ -1,5 +1,3 @@
-
-
 export interface RedisStreamResponse {
   name: string;
   messages: {

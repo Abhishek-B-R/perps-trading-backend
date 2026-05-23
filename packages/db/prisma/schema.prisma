@@ -5,7 +5,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  output = "./generated/client"
+  output   = "./generated/client"
 }
 
 datasource db {
@@ -59,7 +59,7 @@ model Orders {
 
 model Markets {
   id         String   @id @default(uuid())
-  marketSlug String
+  marketSlug String   @unique
   imageUrl   String
   orders     Orders[]
   fills      Fills[]
