@@ -20,6 +20,9 @@ import {
 import CreateOnRamp from "./src/helpers/create-onramp.js";
 import type { RedisStreamResponse } from "./src/types/redis-stream.js";
 
+const GROUP_NAME = "engine-group";
+const CONSUMER_NAME = "engine-" + process.pid;
+
 export type EngineCommandType =
   | "create_onramp"
   | "create_order"
@@ -62,6 +65,16 @@ const responseClient = createClient({ url: env.redisUrl }).on(
 );
 
 await Promise.all([brokerClient.connect(), responseClient.connect()]);
+
+try {
+  await brokerClient.xGroupCreate(env.incomingQueue, GROUP_NAME, "0", {
+    MKSTREAM: true,
+  });
+} catch (e: any) {
+  if (!e.message.includes("BUSYGROUP")) {
+    throw e;
+  }
+}
 
 async function sendResponse(
   responseQueue: string,
@@ -110,12 +123,13 @@ function handleEngineRequest(message: EngineRequest): unknown {
 }
 
 console.log(`Engine listening on Redis queue: ${env.incomingQueue}`);
-let lastRequestId = "0-0";
-
+ 
 for (;;) {
-  const response = (await brokerClient.xRead(
-    { key: env.incomingQueue, id: lastRequestId },
-    { COUNT: 10, BLOCK: 0 },
+  const response = (await brokerClient.xReadGroup(
+    GROUP_NAME,
+    CONSUMER_NAME,
+    { key: env.incomingQueue, id: ">" },
+    { COUNT: 10, BLOCK: 5000 },
   )) as unknown as RedisStreamResponse[] | null;
   if (!response || response.length === 0) continue;
 
@@ -124,10 +138,9 @@ for (;;) {
     continue;
 
   for (const streamMessage of streamData.messages) {
-    lastRequestId = streamMessage.id;
     const { payload: rawMessage } = streamMessage.message;
     if (!rawMessage) {
-      await brokerClient.xDel(env.incomingQueue, streamMessage.id);
+      await brokerClient.xAck(env.incomingQueue, GROUP_NAME, streamMessage.id);
       continue;
     }
 
@@ -136,7 +149,7 @@ for (;;) {
       message = JSON.parse(rawMessage) as EngineRequest;
     } catch {
       console.error("Skipping invalid broker message");
-      await brokerClient.xDel(env.incomingQueue, streamMessage.id);
+      await brokerClient.xAck(env.incomingQueue, GROUP_NAME, streamMessage.id);
       continue;
     }
 
@@ -154,7 +167,7 @@ for (;;) {
         error: error instanceof Error ? error.message : "engine_error",
       });
     } finally {
-      await brokerClient.xDel(env.incomingQueue, streamMessage.id);
+      await brokerClient.xAck(env.incomingQueue, GROUP_NAME, streamMessage.id);
     }
   }
 }

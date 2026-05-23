@@ -59,10 +59,21 @@ export async function sendToEngine(
     payload,
   };
 
-  await publisher.xAdd(env.incomingQueue, "*", {
-    payload: JSON.stringify(message),
-    correlationId: message.correlationId,
-  });
+  await publisher.xAdd(
+    env.incomingQueue,
+    "*",
+    {
+      payload: JSON.stringify(message),
+      correlationId: message.correlationId,
+    },
+    {
+      TRIM: {
+        strategy: "MAXLEN",
+        strategyModifier: "~",
+        threshold: 10000,
+      },
+    },
+  );
   return responsePromise;
 }
 
