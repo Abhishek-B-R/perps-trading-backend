@@ -10,9 +10,11 @@ import {
   connectRedis,
   listenForEngineResponse,
   pingRedis,
+  setupRedis,
 } from "./src/utils/redis-client.js";
 
 await connectRedis();
+await setupRedis();
 void listenForEngineResponse();
 
 const app = express();

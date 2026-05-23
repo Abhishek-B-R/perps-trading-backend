@@ -27,6 +27,21 @@ export async function pingRedis(): Promise<string> {
   return publisher.ping();
 }
 
+const GROUP_NAME = "backend-group";
+const CONSUMER_NAME = "backend-" + process.pid;
+
+export async function setupRedis(): Promise<void> {
+  try {
+    await publisher.xGroupCreate(env.responseQueue, GROUP_NAME, "0", {
+      MKSTREAM: true,
+    });
+  } catch (e: any) {
+    if (!e.message.includes("BUSYGROUP")) {
+      throw e;
+    }
+  }
+}
+
 export async function sendToEngine(
   type: EngineCommandType,
   payload: Record<string, unknown>,
@@ -53,13 +68,13 @@ export async function sendToEngine(
 
 export async function listenForEngineResponse(): Promise<void> {
   console.log(`Listening for engine response: ${env.responseQueue}`);
-  let lastResponseId = "0-0";
-
   for (;;) {
     try {
-      const response = (await subscriber.xRead(
-        { key: env.responseQueue, id: lastResponseId },
-        { COUNT: 10, BLOCK: 0 },
+      const response = (await subscriber.xReadGroup(
+        GROUP_NAME,
+        CONSUMER_NAME,
+        { key: env.responseQueue, id: ">" },
+        { COUNT: 10, BLOCK: 5000 },
       )) as unknown as RedisStreamResponse[] | null;
       if (!response) continue;
       const streamData = response[0];
@@ -71,12 +86,11 @@ export async function listenForEngineResponse(): Promise<void> {
         continue;
 
       for (const streamMessage of streamData.messages) {
-        lastResponseId = streamMessage.id;
         const { payload } = streamMessage.message;
 
         const parsedResponse = JSON.parse(payload) as EngineResponse;
         resolveEngineResponse(parsedResponse);
-        await subscriber.xDel(env.responseQueue, streamMessage.id);
+        await subscriber.xAck(env.responseQueue, GROUP_NAME, streamMessage.id);
       }
     } catch (error) {
       console.error("Invalid engine response", error);
