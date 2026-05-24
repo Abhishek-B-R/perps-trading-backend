@@ -2,7 +2,7 @@ import { prisma } from "db";
 import { createMarketSchema } from "../types/admin-schema";
 import { sendValidationError } from "../utils/validation";
 import type { Request, Response } from "express";
-import { env } from "../utils/env";
+import { env } from "env";
 
 export async function createMarket(req: Request, res: Response) {
   const token = req.headers.token;

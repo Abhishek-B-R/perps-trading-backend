@@ -1,9 +1,9 @@
 import "dotenv/config";
-import { env } from "./env";
+import { env } from "env";
 import {
-  persistCancelledOrder,
   persistFill,
   persistOrder,
+  persistOrderStatus,
 } from "./helper/persists";
 import { CONSUMER_NAME, GROUP_NAME, redis } from "./helper/initialize-redis";
 import type { StreamMessageType, RedisStreamResponse } from "./types/streams";
@@ -30,12 +30,16 @@ async function processMessage(streamMessage: StreamMessageType) {
       await persistOrder(event);
       break;
 
-    case "ORDER_FILLED":
+    case "CREATE_FILL":
       await persistFill(event);
       break;
 
+    case "ORDER_FILLED":
+      await persistOrderStatus(event, "Filled");
+      break;
+
     case "ORDER_CANCELLED":
-      await persistCancelledOrder(event);
+      await persistOrderStatus(event, "Cancelled");
       break;
 
     default:

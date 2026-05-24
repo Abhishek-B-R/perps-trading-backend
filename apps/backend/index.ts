@@ -5,7 +5,7 @@ import express, {
   type Response,
 } from "express";
 import { appRouter } from "./src/routes/index.js";
-import { env } from "./src/utils/env.js";
+import { env } from "env";
 import {
   connectRedis,
   listenForEngineResponse,

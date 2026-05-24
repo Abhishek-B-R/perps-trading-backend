@@ -1,6 +1,6 @@
 import axios, { AxiosError } from "axios";
 import { beforeAll, describe, expect, it } from "bun:test";
-import { BACKEND } from "./config";
+import { BACKEND } from "env";
 
 describe.todo("auth endpoints", () => {
   const username = "abhishek-" + Math.random();

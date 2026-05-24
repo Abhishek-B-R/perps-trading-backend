@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import { env } from "./env.js";
+import { env } from "env";
 
 export interface TokenPayload {
   userId: string;
@@ -10,7 +10,11 @@ export function createToken(payload: TokenPayload): string {
   return jwt.sign(payload, env.jwtSecret, { expiresIn: "7d" });
 }
 
-export function requireAuth(req: Request, res: Response, next: NextFunction): void {
+export function requireAuth(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
   const authHeader = req.headers.authorization;
   const token =
     typeof authHeader === "string" && authHeader.startsWith("Bearer ")

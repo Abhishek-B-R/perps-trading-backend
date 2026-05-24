@@ -1,5 +1,5 @@
 {
-  "name": "db-poller",
+  "name": "env",
   "module": "index.ts",
   "type": "module",
   "private": true,
@@ -9,9 +9,7 @@
   "peerDependencies": {
     "typescript": "^5"
   },
-  "dependencies": {
-    "redis": "^5.12.1",
-    "db": "workspace:*",
-    "env": "workspace*"
+  "exports": {
+    ".": "./index.ts"
   }
 }

@@ -1,5 +1,5 @@
 import { createClient } from "redis";
-import { env } from "../env";
+import { env } from "env";
 
 export const GROUP_NAME = "db-poller-group";
 export const CONSUMER_NAME = "db-poller-" + process.pid;

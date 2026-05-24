@@ -37,5 +37,5 @@ exchangeRouter.get(
   requireAuth,
   asyncHandler(getOpenPositions),
 );
-exchangeRouter.get("/orders/:marketId", requireAuth, asyncHandler(getOrder));
+exchangeRouter.get("/orders/:orderId", requireAuth, asyncHandler(getOrder));
 exchangeRouter.get("/fills", requireAuth, asyncHandler(getFills));

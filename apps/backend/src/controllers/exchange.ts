@@ -149,22 +149,22 @@ export async function getClosedPositions(
 }
 
 export async function getOrder(req: Request, res: Response): Promise<void> {
-  const parsedParams = marketIdParamSchema.safeParse(req.params);
+  const parsedParams = orderIdParamSchema.safeParse(req.params);
   if (!parsedParams.success) {
     sendValidationError(res, parsedParams.error);
     return;
   }
 
-  const { marketId } = parsedParams.data;
-  if (marketId) {
-    throw new Error("no marketid found");
+  const { orderId } = parsedParams.data;
+  if (orderId) {
+    throw new Error("no orderId found");
   }
 
   let openOrders;
   try {
     openOrders = await prisma.orders.findMany({
       where: {
-        marketId,
+        id: orderId,
       },
     });
   } catch (e) {

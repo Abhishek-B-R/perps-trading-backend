@@ -52,15 +52,18 @@ export async function persistFill(event: EventType) {
     },
   });
 }
-export async function persistCancelledOrder(event: EventType) {
+export async function persistOrderStatus(
+  event: EventType,
+  status: "Filled" | "Cancelled" | "PartiallyFilled" | "Open",
+) {
   const orderId = event.payload.orderId as string;
   if (!orderId) {
     throw new Error("orderid not found");
   }
-  
+
   await prisma.orders.update({
     data: {
-      status: "Cancelled",
+      status,
     },
     where: {
       id: orderId,
