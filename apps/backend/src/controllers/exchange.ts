@@ -7,6 +7,7 @@ import {
 } from "../types/exchange-schema.js";
 import { sendToEngine } from "../utils/redis-client.js";
 import { sendValidationError } from "../utils/validation.js";
+import { prisma } from "db";
 
 function getUserId(req: Request): string {
   if (!req.userId) throw new Error("Missing authenticated user");
@@ -57,6 +58,28 @@ export async function createOrder(req: Request, res: Response): Promise<void> {
     price,
     qty,
     slippage,
+  });
+
+  res.status(engineResponse.ok ? 200 : 400).json(
+    engineResponse.ok
+      ? engineResponse.data
+      : {
+          error: engineResponse.error,
+        },
+  );
+}
+
+export async function cancelOrder(req: Request, res: Response): Promise<void> {
+  const parsedParams = orderIdParamSchema.safeParse(req.params);
+  if (!parsedParams.success) {
+    sendValidationError(res, parsedParams.error);
+    return;
+  }
+
+  const { orderId } = parsedParams.data;
+  const engineResponse = await sendToEngine("cancel_order", {
+    userId: getUserId(req),
+    orderId,
   });
 
   res.status(engineResponse.ok ? 200 : 400).json(
@@ -133,54 +156,42 @@ export async function getOrder(req: Request, res: Response): Promise<void> {
   }
 
   const { marketId } = parsedParams.data;
-  const engineResponse = await sendToEngine("get_order", {
-    userId: getUserId(req),
-    marketId,
-  });
+  if (marketId) {
+    throw new Error("no marketid found");
+  }
 
-  res.status(engineResponse.ok ? 200 : 404).json(
-    engineResponse.ok
-      ? engineResponse.data
-      : {
-          error: engineResponse.error,
-        },
-  );
+  let openOrders;
+  try {
+    openOrders = await prisma.orders.findMany({
+      where: {
+        marketId,
+      },
+    });
+  } catch (e) {
+    res.status(400).json({
+      error: e,
+    });
+  }
+
+  res.status(200).json(openOrders);
 }
 
 export async function getFills(req: Request, res: Response): Promise<void> {
-  const engineResponse = await sendToEngine("get_fills", {
-    userId: getUserId(req),
-  });
-
-  res.status(engineResponse.ok ? 200 : 404).json(
-    engineResponse.ok
-      ? engineResponse.data
-      : {
-          error: engineResponse.error,
-        },
-  );
-}
-
-export async function cancelOrder(req: Request, res: Response): Promise<void> {
-  const parsedParams = orderIdParamSchema.safeParse(req.params);
-  if (!parsedParams.success) {
-    sendValidationError(res, parsedParams.error);
-    return;
+  const userId = getUserId(req);
+  let openOrders;
+  try {
+    openOrders = await prisma.fills.findMany({
+      where: {
+        OR: [{ maker: userId }, { taker: userId }],
+      },
+    });
+  } catch (e) {
+    res.status(400).json({
+      error: e,
+    });
   }
 
-  const { orderId } = parsedParams.data;
-  const engineResponse = await sendToEngine("cancel_order", {
-    userId: getUserId(req),
-    orderId,
-  });
-
-  res.status(engineResponse.ok ? 200 : 400).json(
-    engineResponse.ok
-      ? engineResponse.data
-      : {
-          error: engineResponse.error,
-        },
-  );
+  res.status(200).json(openOrders);
 }
 
 export async function openOrders(req: Request, res: Response): Promise<void> {
@@ -191,16 +202,23 @@ export async function openOrders(req: Request, res: Response): Promise<void> {
   }
 
   const { marketId } = parsedParams.data;
-  const engineResponse = await sendToEngine("get_open_order", {
-    userId: getUserId(req),
-    marketId,
-  });
+  if (marketId) {
+    throw new Error("no marketid found");
+  }
 
-  res.status(engineResponse.ok ? 200 : 400).json(
-    engineResponse.ok
-      ? engineResponse.data
-      : {
-          error: engineResponse.error,
-        },
-  );
+  let openOrders;
+  try {
+    openOrders = await prisma.orders.findMany({
+      where: {
+        marketId,
+        status: "Open",
+      },
+    });
+  } catch (e) {
+    res.status(400).json({
+      error: e,
+    });
+  }
+
+  res.status(200).json(openOrders);
 }
