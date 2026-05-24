@@ -7,6 +7,7 @@ import {
   type Users,
 } from "../store/exchange-store";
 import { PositionUpdation } from "../utils/position-updation";
+import { PublishToEngine } from "../utils/publish-to-poller";
 
 export default async function CreateOrder(data: CreateOrderInput) {
   //TODO: input validation
@@ -36,6 +37,19 @@ export default async function CreateOrder(data: CreateOrderInput) {
   }
 
   userData.orders.push({
+    orderId,
+    market: data.market,
+    type: data.positionType,
+    qty: data.qty,
+    margin: data.equity, // update later
+    orderType: data.orderType,
+    price: data.price ?? 0,
+    slippage: data.slippage ?? 0,
+    status: "open",
+    createdAt: Date.now(),
+  });
+
+  await PublishToEngine("ORDER_CREATED", {
     orderId,
     market: data.market,
     type: data.positionType,

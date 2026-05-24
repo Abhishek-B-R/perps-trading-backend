@@ -79,8 +79,3 @@ export function PositionUpdation(
     createdAt: Date.now(),
   });
 }
-
-export function PostitionUpdationMarketMaker(
-  bid: Bid,
-  currentMarketPrice: number,
-) {}
