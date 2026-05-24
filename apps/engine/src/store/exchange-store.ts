@@ -2,6 +2,13 @@ export type PositionSide = "long" | "short";
 export type OrderType = "market" | "limit";
 export type OrderStatus = "open" | "partially_filled" | "filled" | "cancelled";
 
+export type EngineEventType =
+  | "ORDER_CREATED"
+  | "ORDER_FILLED"
+  | "ORDER_CANCELLED"
+  | "POSITION_UPDATED"
+  | "USER_LIQUIDATED";
+
 export interface Users {
   userId: string;
   // username: string;

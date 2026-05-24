@@ -57,7 +57,7 @@ const brokerClient = createClient({ url: env.redisUrl }).on(
   },
 );
 
-const responseClient = createClient({ url: env.redisUrl }).on(
+export const responseClient = createClient({ url: env.redisUrl }).on(
   "error",
   (error) => {
     console.error("Redis response client error", error);
@@ -123,7 +123,7 @@ function handleEngineRequest(message: EngineRequest): unknown {
 }
 
 console.log(`Engine listening on Redis queue: ${env.incomingQueue}`);
- 
+
 for (;;) {
   const response = (await brokerClient.xReadGroup(
     GROUP_NAME,
