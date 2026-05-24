@@ -46,9 +46,10 @@ model Orders {
   orderType     OrderType
   marketId      String
   market        Markets   @relation(fields: [marketId], references: [id])
-  price         Float
+  price         String
+  equity        String
   slippage      Int
-  qty           Float
+  qty           String
   status        Status
   initialMargin String
   createdAt     DateTime  @default(now())
@@ -59,7 +60,7 @@ model Orders {
 
 model Markets {
   id         String   @id @default(uuid())
-  marketSlug String
+  marketSlug String   @unique
   imageUrl   String
   orders     Orders[]
   fills      Fills[]
@@ -73,8 +74,8 @@ model Fills {
   takerUser    User     @relation("taker", fields: [taker], references: [id])
   marketId     String
   market       Markets  @relation(fields: [marketId], references: [id])
-  price        Float
-  qty          Float
+  price        String
+  qty          String
   makerOrderId String
   makerOrder   Orders   @relation("makerOrder", fields: [makerOrderId], references: [id])
   takerOrderId String

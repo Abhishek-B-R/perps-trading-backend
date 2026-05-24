@@ -2428,15 +2428,11 @@ export namespace Prisma {
   }
 
   export type OrdersAvgAggregateOutputType = {
-    price: number | null
     slippage: number | null
-    qty: number | null
   }
 
   export type OrdersSumAggregateOutputType = {
-    price: number | null
     slippage: number | null
-    qty: number | null
   }
 
   export type OrdersMinAggregateOutputType = {
@@ -2445,9 +2441,10 @@ export namespace Prisma {
     type: $Enums.Type | null
     orderType: $Enums.OrderType | null
     marketId: string | null
-    price: number | null
+    price: string | null
+    equity: string | null
     slippage: number | null
-    qty: number | null
+    qty: string | null
     status: $Enums.Status | null
     initialMargin: string | null
     createdAt: Date | null
@@ -2460,9 +2457,10 @@ export namespace Prisma {
     type: $Enums.Type | null
     orderType: $Enums.OrderType | null
     marketId: string | null
-    price: number | null
+    price: string | null
+    equity: string | null
     slippage: number | null
-    qty: number | null
+    qty: string | null
     status: $Enums.Status | null
     initialMargin: string | null
     createdAt: Date | null
@@ -2476,6 +2474,7 @@ export namespace Prisma {
     orderType: number
     marketId: number
     price: number
+    equity: number
     slippage: number
     qty: number
     status: number
@@ -2487,15 +2486,11 @@ export namespace Prisma {
 
 
   export type OrdersAvgAggregateInputType = {
-    price?: true
     slippage?: true
-    qty?: true
   }
 
   export type OrdersSumAggregateInputType = {
-    price?: true
     slippage?: true
-    qty?: true
   }
 
   export type OrdersMinAggregateInputType = {
@@ -2505,6 +2500,7 @@ export namespace Prisma {
     orderType?: true
     marketId?: true
     price?: true
+    equity?: true
     slippage?: true
     qty?: true
     status?: true
@@ -2520,6 +2516,7 @@ export namespace Prisma {
     orderType?: true
     marketId?: true
     price?: true
+    equity?: true
     slippage?: true
     qty?: true
     status?: true
@@ -2535,6 +2532,7 @@ export namespace Prisma {
     orderType?: true
     marketId?: true
     price?: true
+    equity?: true
     slippage?: true
     qty?: true
     status?: true
@@ -2636,9 +2634,10 @@ export namespace Prisma {
     type: $Enums.Type
     orderType: $Enums.OrderType
     marketId: string
-    price: number
+    price: string
+    equity: string
     slippage: number
-    qty: number
+    qty: string
     status: $Enums.Status
     initialMargin: string
     createdAt: Date
@@ -2671,6 +2670,7 @@ export namespace Prisma {
     orderType?: boolean
     marketId?: boolean
     price?: boolean
+    equity?: boolean
     slippage?: boolean
     qty?: boolean
     status?: boolean
@@ -2691,6 +2691,7 @@ export namespace Prisma {
     orderType?: boolean
     marketId?: boolean
     price?: boolean
+    equity?: boolean
     slippage?: boolean
     qty?: boolean
     status?: boolean
@@ -2708,6 +2709,7 @@ export namespace Prisma {
     orderType?: boolean
     marketId?: boolean
     price?: boolean
+    equity?: boolean
     slippage?: boolean
     qty?: boolean
     status?: boolean
@@ -2725,6 +2727,7 @@ export namespace Prisma {
     orderType?: boolean
     marketId?: boolean
     price?: boolean
+    equity?: boolean
     slippage?: boolean
     qty?: boolean
     status?: boolean
@@ -2733,7 +2736,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type OrdersOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userID" | "type" | "orderType" | "marketId" | "price" | "slippage" | "qty" | "status" | "initialMargin" | "createdAt" | "updatedAt", ExtArgs["result"]["orders"]>
+  export type OrdersOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userID" | "type" | "orderType" | "marketId" | "price" | "equity" | "slippage" | "qty" | "status" | "initialMargin" | "createdAt" | "updatedAt", ExtArgs["result"]["orders"]>
   export type OrdersInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     author?: boolean | UserDefaultArgs<ExtArgs>
     market?: boolean | MarketsDefaultArgs<ExtArgs>
@@ -2764,9 +2767,10 @@ export namespace Prisma {
       type: $Enums.Type
       orderType: $Enums.OrderType
       marketId: string
-      price: number
+      price: string
+      equity: string
       slippage: number
-      qty: number
+      qty: string
       status: $Enums.Status
       initialMargin: string
       createdAt: Date
@@ -3203,9 +3207,10 @@ export namespace Prisma {
     readonly type: FieldRef<"Orders", 'Type'>
     readonly orderType: FieldRef<"Orders", 'OrderType'>
     readonly marketId: FieldRef<"Orders", 'String'>
-    readonly price: FieldRef<"Orders", 'Float'>
+    readonly price: FieldRef<"Orders", 'String'>
+    readonly equity: FieldRef<"Orders", 'String'>
     readonly slippage: FieldRef<"Orders", 'Int'>
-    readonly qty: FieldRef<"Orders", 'Float'>
+    readonly qty: FieldRef<"Orders", 'String'>
     readonly status: FieldRef<"Orders", 'Status'>
     readonly initialMargin: FieldRef<"Orders", 'String'>
     readonly createdAt: FieldRef<"Orders", 'DateTime'>
@@ -4760,20 +4765,8 @@ export namespace Prisma {
 
   export type AggregateFills = {
     _count: FillsCountAggregateOutputType | null
-    _avg: FillsAvgAggregateOutputType | null
-    _sum: FillsSumAggregateOutputType | null
     _min: FillsMinAggregateOutputType | null
     _max: FillsMaxAggregateOutputType | null
-  }
-
-  export type FillsAvgAggregateOutputType = {
-    price: number | null
-    qty: number | null
-  }
-
-  export type FillsSumAggregateOutputType = {
-    price: number | null
-    qty: number | null
   }
 
   export type FillsMinAggregateOutputType = {
@@ -4781,8 +4774,8 @@ export namespace Prisma {
     maker: string | null
     taker: string | null
     marketId: string | null
-    price: number | null
-    qty: number | null
+    price: string | null
+    qty: string | null
     makerOrderId: string | null
     takerOrderId: string | null
     createdAt: Date | null
@@ -4794,8 +4787,8 @@ export namespace Prisma {
     maker: string | null
     taker: string | null
     marketId: string | null
-    price: number | null
-    qty: number | null
+    price: string | null
+    qty: string | null
     makerOrderId: string | null
     takerOrderId: string | null
     createdAt: Date | null
@@ -4816,16 +4809,6 @@ export namespace Prisma {
     _all: number
   }
 
-
-  export type FillsAvgAggregateInputType = {
-    price?: true
-    qty?: true
-  }
-
-  export type FillsSumAggregateInputType = {
-    price?: true
-    qty?: true
-  }
 
   export type FillsMinAggregateInputType = {
     id?: true
@@ -4905,18 +4888,6 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
-     * Select which fields to average
-    **/
-    _avg?: FillsAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: FillsSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
      * Select which fields to find the minimum value
     **/
     _min?: FillsMinAggregateInputType
@@ -4947,8 +4918,6 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: FillsCountAggregateInputType | true
-    _avg?: FillsAvgAggregateInputType
-    _sum?: FillsSumAggregateInputType
     _min?: FillsMinAggregateInputType
     _max?: FillsMaxAggregateInputType
   }
@@ -4958,15 +4927,13 @@ export namespace Prisma {
     maker: string
     taker: string
     marketId: string
-    price: number
-    qty: number
+    price: string
+    qty: string
     makerOrderId: string
     takerOrderId: string
     createdAt: Date
     updatedAt: Date
     _count: FillsCountAggregateOutputType | null
-    _avg: FillsAvgAggregateOutputType | null
-    _sum: FillsSumAggregateOutputType | null
     _min: FillsMinAggregateOutputType | null
     _max: FillsMaxAggregateOutputType | null
   }
@@ -5089,8 +5056,8 @@ export namespace Prisma {
       maker: string
       taker: string
       marketId: string
-      price: number
-      qty: number
+      price: string
+      qty: string
       makerOrderId: string
       takerOrderId: string
       createdAt: Date
@@ -5527,8 +5494,8 @@ export namespace Prisma {
     readonly maker: FieldRef<"Fills", 'String'>
     readonly taker: FieldRef<"Fills", 'String'>
     readonly marketId: FieldRef<"Fills", 'String'>
-    readonly price: FieldRef<"Fills", 'Float'>
-    readonly qty: FieldRef<"Fills", 'Float'>
+    readonly price: FieldRef<"Fills", 'String'>
+    readonly qty: FieldRef<"Fills", 'String'>
     readonly makerOrderId: FieldRef<"Fills", 'String'>
     readonly takerOrderId: FieldRef<"Fills", 'String'>
     readonly createdAt: FieldRef<"Fills", 'DateTime'>
@@ -5982,6 +5949,7 @@ export namespace Prisma {
     orderType: 'orderType',
     marketId: 'marketId',
     price: 'price',
+    equity: 'equity',
     slippage: 'slippage',
     qty: 'qty',
     status: 'status',
@@ -6082,20 +6050,6 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Float'
-   */
-  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
-    
-
-
-  /**
-   * Reference to a field of type 'Float[]'
-   */
-  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
-    
-
-
-  /**
    * Reference to a field of type 'Int'
    */
   export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
@@ -6134,6 +6088,20 @@ export namespace Prisma {
    * Reference to a field of type 'DateTime[]'
    */
   export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float'
+   */
+  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float[]'
+   */
+  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
   /**
    * Deep Input Types
@@ -6200,9 +6168,10 @@ export namespace Prisma {
     type?: EnumTypeFilter<"Orders"> | $Enums.Type
     orderType?: EnumOrderTypeFilter<"Orders"> | $Enums.OrderType
     marketId?: StringFilter<"Orders"> | string
-    price?: FloatFilter<"Orders"> | number
+    price?: StringFilter<"Orders"> | string
+    equity?: StringFilter<"Orders"> | string
     slippage?: IntFilter<"Orders"> | number
-    qty?: FloatFilter<"Orders"> | number
+    qty?: StringFilter<"Orders"> | string
     status?: EnumStatusFilter<"Orders"> | $Enums.Status
     initialMargin?: StringFilter<"Orders"> | string
     createdAt?: DateTimeFilter<"Orders"> | Date | string
@@ -6220,6 +6189,7 @@ export namespace Prisma {
     orderType?: SortOrder
     marketId?: SortOrder
     price?: SortOrder
+    equity?: SortOrder
     slippage?: SortOrder
     qty?: SortOrder
     status?: SortOrder
@@ -6241,9 +6211,10 @@ export namespace Prisma {
     type?: EnumTypeFilter<"Orders"> | $Enums.Type
     orderType?: EnumOrderTypeFilter<"Orders"> | $Enums.OrderType
     marketId?: StringFilter<"Orders"> | string
-    price?: FloatFilter<"Orders"> | number
+    price?: StringFilter<"Orders"> | string
+    equity?: StringFilter<"Orders"> | string
     slippage?: IntFilter<"Orders"> | number
-    qty?: FloatFilter<"Orders"> | number
+    qty?: StringFilter<"Orders"> | string
     status?: EnumStatusFilter<"Orders"> | $Enums.Status
     initialMargin?: StringFilter<"Orders"> | string
     createdAt?: DateTimeFilter<"Orders"> | Date | string
@@ -6261,6 +6232,7 @@ export namespace Prisma {
     orderType?: SortOrder
     marketId?: SortOrder
     price?: SortOrder
+    equity?: SortOrder
     slippage?: SortOrder
     qty?: SortOrder
     status?: SortOrder
@@ -6283,9 +6255,10 @@ export namespace Prisma {
     type?: EnumTypeWithAggregatesFilter<"Orders"> | $Enums.Type
     orderType?: EnumOrderTypeWithAggregatesFilter<"Orders"> | $Enums.OrderType
     marketId?: StringWithAggregatesFilter<"Orders"> | string
-    price?: FloatWithAggregatesFilter<"Orders"> | number
+    price?: StringWithAggregatesFilter<"Orders"> | string
+    equity?: StringWithAggregatesFilter<"Orders"> | string
     slippage?: IntWithAggregatesFilter<"Orders"> | number
-    qty?: FloatWithAggregatesFilter<"Orders"> | number
+    qty?: StringWithAggregatesFilter<"Orders"> | string
     status?: EnumStatusWithAggregatesFilter<"Orders"> | $Enums.Status
     initialMargin?: StringWithAggregatesFilter<"Orders"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Orders"> | Date | string
@@ -6313,14 +6286,14 @@ export namespace Prisma {
 
   export type MarketsWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    marketSlug?: string
     AND?: MarketsWhereInput | MarketsWhereInput[]
     OR?: MarketsWhereInput[]
     NOT?: MarketsWhereInput | MarketsWhereInput[]
-    marketSlug?: StringFilter<"Markets"> | string
     imageUrl?: StringFilter<"Markets"> | string
     orders?: OrdersListRelationFilter
     fills?: FillsListRelationFilter
-  }, "id">
+  }, "id" | "marketSlug">
 
   export type MarketsOrderByWithAggregationInput = {
     id?: SortOrder
@@ -6348,8 +6321,8 @@ export namespace Prisma {
     maker?: StringFilter<"Fills"> | string
     taker?: StringFilter<"Fills"> | string
     marketId?: StringFilter<"Fills"> | string
-    price?: FloatFilter<"Fills"> | number
-    qty?: FloatFilter<"Fills"> | number
+    price?: StringFilter<"Fills"> | string
+    qty?: StringFilter<"Fills"> | string
     makerOrderId?: StringFilter<"Fills"> | string
     takerOrderId?: StringFilter<"Fills"> | string
     createdAt?: DateTimeFilter<"Fills"> | Date | string
@@ -6387,8 +6360,8 @@ export namespace Prisma {
     maker?: StringFilter<"Fills"> | string
     taker?: StringFilter<"Fills"> | string
     marketId?: StringFilter<"Fills"> | string
-    price?: FloatFilter<"Fills"> | number
-    qty?: FloatFilter<"Fills"> | number
+    price?: StringFilter<"Fills"> | string
+    qty?: StringFilter<"Fills"> | string
     makerOrderId?: StringFilter<"Fills"> | string
     takerOrderId?: StringFilter<"Fills"> | string
     createdAt?: DateTimeFilter<"Fills"> | Date | string
@@ -6412,10 +6385,8 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: FillsCountOrderByAggregateInput
-    _avg?: FillsAvgOrderByAggregateInput
     _max?: FillsMaxOrderByAggregateInput
     _min?: FillsMinOrderByAggregateInput
-    _sum?: FillsSumOrderByAggregateInput
   }
 
   export type FillsScalarWhereWithAggregatesInput = {
@@ -6426,8 +6397,8 @@ export namespace Prisma {
     maker?: StringWithAggregatesFilter<"Fills"> | string
     taker?: StringWithAggregatesFilter<"Fills"> | string
     marketId?: StringWithAggregatesFilter<"Fills"> | string
-    price?: FloatWithAggregatesFilter<"Fills"> | number
-    qty?: FloatWithAggregatesFilter<"Fills"> | number
+    price?: StringWithAggregatesFilter<"Fills"> | string
+    qty?: StringWithAggregatesFilter<"Fills"> | string
     makerOrderId?: StringWithAggregatesFilter<"Fills"> | string
     takerOrderId?: StringWithAggregatesFilter<"Fills"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Fills"> | Date | string
@@ -6492,9 +6463,10 @@ export namespace Prisma {
     id?: string
     type: $Enums.Type
     orderType: $Enums.OrderType
-    price: number
+    price: string
+    equity: string
     slippage: number
-    qty: number
+    qty: string
     status: $Enums.Status
     initialMargin: string
     createdAt?: Date | string
@@ -6511,9 +6483,10 @@ export namespace Prisma {
     type: $Enums.Type
     orderType: $Enums.OrderType
     marketId: string
-    price: number
+    price: string
+    equity: string
     slippage: number
-    qty: number
+    qty: string
     status: $Enums.Status
     initialMargin: string
     createdAt?: Date | string
@@ -6526,9 +6499,10 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     type?: EnumTypeFieldUpdateOperationsInput | $Enums.Type
     orderType?: EnumOrderTypeFieldUpdateOperationsInput | $Enums.OrderType
-    price?: FloatFieldUpdateOperationsInput | number
+    price?: StringFieldUpdateOperationsInput | string
+    equity?: StringFieldUpdateOperationsInput | string
     slippage?: IntFieldUpdateOperationsInput | number
-    qty?: FloatFieldUpdateOperationsInput | number
+    qty?: StringFieldUpdateOperationsInput | string
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     initialMargin?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6545,9 +6519,10 @@ export namespace Prisma {
     type?: EnumTypeFieldUpdateOperationsInput | $Enums.Type
     orderType?: EnumOrderTypeFieldUpdateOperationsInput | $Enums.OrderType
     marketId?: StringFieldUpdateOperationsInput | string
-    price?: FloatFieldUpdateOperationsInput | number
+    price?: StringFieldUpdateOperationsInput | string
+    equity?: StringFieldUpdateOperationsInput | string
     slippage?: IntFieldUpdateOperationsInput | number
-    qty?: FloatFieldUpdateOperationsInput | number
+    qty?: StringFieldUpdateOperationsInput | string
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     initialMargin?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6562,9 +6537,10 @@ export namespace Prisma {
     type: $Enums.Type
     orderType: $Enums.OrderType
     marketId: string
-    price: number
+    price: string
+    equity: string
     slippage: number
-    qty: number
+    qty: string
     status: $Enums.Status
     initialMargin: string
     createdAt?: Date | string
@@ -6575,9 +6551,10 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     type?: EnumTypeFieldUpdateOperationsInput | $Enums.Type
     orderType?: EnumOrderTypeFieldUpdateOperationsInput | $Enums.OrderType
-    price?: FloatFieldUpdateOperationsInput | number
+    price?: StringFieldUpdateOperationsInput | string
+    equity?: StringFieldUpdateOperationsInput | string
     slippage?: IntFieldUpdateOperationsInput | number
-    qty?: FloatFieldUpdateOperationsInput | number
+    qty?: StringFieldUpdateOperationsInput | string
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     initialMargin?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6590,9 +6567,10 @@ export namespace Prisma {
     type?: EnumTypeFieldUpdateOperationsInput | $Enums.Type
     orderType?: EnumOrderTypeFieldUpdateOperationsInput | $Enums.OrderType
     marketId?: StringFieldUpdateOperationsInput | string
-    price?: FloatFieldUpdateOperationsInput | number
+    price?: StringFieldUpdateOperationsInput | string
+    equity?: StringFieldUpdateOperationsInput | string
     slippage?: IntFieldUpdateOperationsInput | number
-    qty?: FloatFieldUpdateOperationsInput | number
+    qty?: StringFieldUpdateOperationsInput | string
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     initialMargin?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6651,8 +6629,8 @@ export namespace Prisma {
 
   export type FillsCreateInput = {
     id?: string
-    price: number
-    qty: number
+    price: string
+    qty: string
     createdAt?: Date | string
     updatedAt?: Date | string
     makerUser: UserCreateNestedOneWithoutMakerFillsInput
@@ -6667,8 +6645,8 @@ export namespace Prisma {
     maker: string
     taker: string
     marketId: string
-    price: number
-    qty: number
+    price: string
+    qty: string
     makerOrderId: string
     takerOrderId: string
     createdAt?: Date | string
@@ -6677,8 +6655,8 @@ export namespace Prisma {
 
   export type FillsUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    price?: FloatFieldUpdateOperationsInput | number
-    qty?: FloatFieldUpdateOperationsInput | number
+    price?: StringFieldUpdateOperationsInput | string
+    qty?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     makerUser?: UserUpdateOneRequiredWithoutMakerFillsNestedInput
@@ -6693,8 +6671,8 @@ export namespace Prisma {
     maker?: StringFieldUpdateOperationsInput | string
     taker?: StringFieldUpdateOperationsInput | string
     marketId?: StringFieldUpdateOperationsInput | string
-    price?: FloatFieldUpdateOperationsInput | number
-    qty?: FloatFieldUpdateOperationsInput | number
+    price?: StringFieldUpdateOperationsInput | string
+    qty?: StringFieldUpdateOperationsInput | string
     makerOrderId?: StringFieldUpdateOperationsInput | string
     takerOrderId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6706,8 +6684,8 @@ export namespace Prisma {
     maker: string
     taker: string
     marketId: string
-    price: number
-    qty: number
+    price: string
+    qty: string
     makerOrderId: string
     takerOrderId: string
     createdAt?: Date | string
@@ -6716,8 +6694,8 @@ export namespace Prisma {
 
   export type FillsUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    price?: FloatFieldUpdateOperationsInput | number
-    qty?: FloatFieldUpdateOperationsInput | number
+    price?: StringFieldUpdateOperationsInput | string
+    qty?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -6727,8 +6705,8 @@ export namespace Prisma {
     maker?: StringFieldUpdateOperationsInput | string
     taker?: StringFieldUpdateOperationsInput | string
     marketId?: StringFieldUpdateOperationsInput | string
-    price?: FloatFieldUpdateOperationsInput | number
-    qty?: FloatFieldUpdateOperationsInput | number
+    price?: StringFieldUpdateOperationsInput | string
+    qty?: StringFieldUpdateOperationsInput | string
     makerOrderId?: StringFieldUpdateOperationsInput | string
     takerOrderId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6820,17 +6798,6 @@ export namespace Prisma {
     not?: NestedEnumOrderTypeFilter<$PrismaModel> | $Enums.OrderType
   }
 
-  export type FloatFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatFilter<$PrismaModel> | number
-  }
-
   export type IntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -6877,6 +6844,7 @@ export namespace Prisma {
     orderType?: SortOrder
     marketId?: SortOrder
     price?: SortOrder
+    equity?: SortOrder
     slippage?: SortOrder
     qty?: SortOrder
     status?: SortOrder
@@ -6886,9 +6854,7 @@ export namespace Prisma {
   }
 
   export type OrdersAvgOrderByAggregateInput = {
-    price?: SortOrder
     slippage?: SortOrder
-    qty?: SortOrder
   }
 
   export type OrdersMaxOrderByAggregateInput = {
@@ -6898,6 +6864,7 @@ export namespace Prisma {
     orderType?: SortOrder
     marketId?: SortOrder
     price?: SortOrder
+    equity?: SortOrder
     slippage?: SortOrder
     qty?: SortOrder
     status?: SortOrder
@@ -6913,6 +6880,7 @@ export namespace Prisma {
     orderType?: SortOrder
     marketId?: SortOrder
     price?: SortOrder
+    equity?: SortOrder
     slippage?: SortOrder
     qty?: SortOrder
     status?: SortOrder
@@ -6922,9 +6890,7 @@ export namespace Prisma {
   }
 
   export type OrdersSumOrderByAggregateInput = {
-    price?: SortOrder
     slippage?: SortOrder
-    qty?: SortOrder
   }
 
   export type EnumTypeWithAggregatesFilter<$PrismaModel = never> = {
@@ -6945,22 +6911,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumOrderTypeFilter<$PrismaModel>
     _max?: NestedEnumOrderTypeFilter<$PrismaModel>
-  }
-
-  export type FloatWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedFloatFilter<$PrismaModel>
-    _min?: NestedFloatFilter<$PrismaModel>
-    _max?: NestedFloatFilter<$PrismaModel>
   }
 
   export type IntWithAggregatesFilter<$PrismaModel = never> = {
@@ -7039,11 +6989,6 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
-  export type FillsAvgOrderByAggregateInput = {
-    price?: SortOrder
-    qty?: SortOrder
-  }
-
   export type FillsMaxOrderByAggregateInput = {
     id?: SortOrder
     maker?: SortOrder
@@ -7068,11 +7013,6 @@ export namespace Prisma {
     takerOrderId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-  }
-
-  export type FillsSumOrderByAggregateInput = {
-    price?: SortOrder
-    qty?: SortOrder
   }
 
   export type OrdersCreateNestedManyWithoutAuthorInput = {
@@ -7251,14 +7191,6 @@ export namespace Prisma {
 
   export type EnumOrderTypeFieldUpdateOperationsInput = {
     set?: $Enums.OrderType
-  }
-
-  export type FloatFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
   }
 
   export type IntFieldUpdateOperationsInput = {
@@ -7559,17 +7491,6 @@ export namespace Prisma {
     not?: NestedEnumOrderTypeFilter<$PrismaModel> | $Enums.OrderType
   }
 
-  export type NestedFloatFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatFilter<$PrismaModel> | number
-  }
-
   export type NestedEnumStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.Status | EnumStatusFieldRefInput<$PrismaModel>
     in?: $Enums.Status[] | ListEnumStatusFieldRefInput<$PrismaModel>
@@ -7608,22 +7529,6 @@ export namespace Prisma {
     _max?: NestedEnumOrderTypeFilter<$PrismaModel>
   }
 
-  export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedFloatFilter<$PrismaModel>
-    _min?: NestedFloatFilter<$PrismaModel>
-    _max?: NestedFloatFilter<$PrismaModel>
-  }
-
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -7638,6 +7543,17 @@ export namespace Prisma {
     _sum?: NestedIntFilter<$PrismaModel>
     _min?: NestedIntFilter<$PrismaModel>
     _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type NestedFloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
   }
 
   export type NestedEnumStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -7668,9 +7584,10 @@ export namespace Prisma {
     id?: string
     type: $Enums.Type
     orderType: $Enums.OrderType
-    price: number
+    price: string
+    equity: string
     slippage: number
-    qty: number
+    qty: string
     status: $Enums.Status
     initialMargin: string
     createdAt?: Date | string
@@ -7685,9 +7602,10 @@ export namespace Prisma {
     type: $Enums.Type
     orderType: $Enums.OrderType
     marketId: string
-    price: number
+    price: string
+    equity: string
     slippage: number
-    qty: number
+    qty: string
     status: $Enums.Status
     initialMargin: string
     createdAt?: Date | string
@@ -7708,8 +7626,8 @@ export namespace Prisma {
 
   export type FillsCreateWithoutMakerUserInput = {
     id?: string
-    price: number
-    qty: number
+    price: string
+    qty: string
     createdAt?: Date | string
     updatedAt?: Date | string
     takerUser: UserCreateNestedOneWithoutTakerFillsInput
@@ -7722,8 +7640,8 @@ export namespace Prisma {
     id?: string
     taker: string
     marketId: string
-    price: number
-    qty: number
+    price: string
+    qty: string
     makerOrderId: string
     takerOrderId: string
     createdAt?: Date | string
@@ -7742,8 +7660,8 @@ export namespace Prisma {
 
   export type FillsCreateWithoutTakerUserInput = {
     id?: string
-    price: number
-    qty: number
+    price: string
+    qty: string
     createdAt?: Date | string
     updatedAt?: Date | string
     makerUser: UserCreateNestedOneWithoutMakerFillsInput
@@ -7756,8 +7674,8 @@ export namespace Prisma {
     id?: string
     maker: string
     marketId: string
-    price: number
-    qty: number
+    price: string
+    qty: string
     makerOrderId: string
     takerOrderId: string
     createdAt?: Date | string
@@ -7799,9 +7717,10 @@ export namespace Prisma {
     type?: EnumTypeFilter<"Orders"> | $Enums.Type
     orderType?: EnumOrderTypeFilter<"Orders"> | $Enums.OrderType
     marketId?: StringFilter<"Orders"> | string
-    price?: FloatFilter<"Orders"> | number
+    price?: StringFilter<"Orders"> | string
+    equity?: StringFilter<"Orders"> | string
     slippage?: IntFilter<"Orders"> | number
-    qty?: FloatFilter<"Orders"> | number
+    qty?: StringFilter<"Orders"> | string
     status?: EnumStatusFilter<"Orders"> | $Enums.Status
     initialMargin?: StringFilter<"Orders"> | string
     createdAt?: DateTimeFilter<"Orders"> | Date | string
@@ -7832,8 +7751,8 @@ export namespace Prisma {
     maker?: StringFilter<"Fills"> | string
     taker?: StringFilter<"Fills"> | string
     marketId?: StringFilter<"Fills"> | string
-    price?: FloatFilter<"Fills"> | number
-    qty?: FloatFilter<"Fills"> | number
+    price?: StringFilter<"Fills"> | string
+    qty?: StringFilter<"Fills"> | string
     makerOrderId?: StringFilter<"Fills"> | string
     takerOrderId?: StringFilter<"Fills"> | string
     createdAt?: DateTimeFilter<"Fills"> | Date | string
@@ -7898,8 +7817,8 @@ export namespace Prisma {
 
   export type FillsCreateWithoutMakerOrderInput = {
     id?: string
-    price: number
-    qty: number
+    price: string
+    qty: string
     createdAt?: Date | string
     updatedAt?: Date | string
     makerUser: UserCreateNestedOneWithoutMakerFillsInput
@@ -7913,8 +7832,8 @@ export namespace Prisma {
     maker: string
     taker: string
     marketId: string
-    price: number
-    qty: number
+    price: string
+    qty: string
     takerOrderId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -7932,8 +7851,8 @@ export namespace Prisma {
 
   export type FillsCreateWithoutTakerOrderInput = {
     id?: string
-    price: number
-    qty: number
+    price: string
+    qty: string
     createdAt?: Date | string
     updatedAt?: Date | string
     makerUser: UserCreateNestedOneWithoutMakerFillsInput
@@ -7947,8 +7866,8 @@ export namespace Prisma {
     maker: string
     taker: string
     marketId: string
-    price: number
-    qty: number
+    price: string
+    qty: string
     makerOrderId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -8052,9 +7971,10 @@ export namespace Prisma {
     id?: string
     type: $Enums.Type
     orderType: $Enums.OrderType
-    price: number
+    price: string
+    equity: string
     slippage: number
-    qty: number
+    qty: string
     status: $Enums.Status
     initialMargin: string
     createdAt?: Date | string
@@ -8069,9 +7989,10 @@ export namespace Prisma {
     userID: string
     type: $Enums.Type
     orderType: $Enums.OrderType
-    price: number
+    price: string
+    equity: string
     slippage: number
-    qty: number
+    qty: string
     status: $Enums.Status
     initialMargin: string
     createdAt?: Date | string
@@ -8092,8 +8013,8 @@ export namespace Prisma {
 
   export type FillsCreateWithoutMarketInput = {
     id?: string
-    price: number
-    qty: number
+    price: string
+    qty: string
     createdAt?: Date | string
     updatedAt?: Date | string
     makerUser: UserCreateNestedOneWithoutMakerFillsInput
@@ -8106,8 +8027,8 @@ export namespace Prisma {
     id?: string
     maker: string
     taker: string
-    price: number
-    qty: number
+    price: string
+    qty: string
     makerOrderId: string
     takerOrderId: string
     createdAt?: Date | string
@@ -8221,9 +8142,10 @@ export namespace Prisma {
     id?: string
     type: $Enums.Type
     orderType: $Enums.OrderType
-    price: number
+    price: string
+    equity: string
     slippage: number
-    qty: number
+    qty: string
     status: $Enums.Status
     initialMargin: string
     createdAt?: Date | string
@@ -8239,9 +8161,10 @@ export namespace Prisma {
     type: $Enums.Type
     orderType: $Enums.OrderType
     marketId: string
-    price: number
+    price: string
+    equity: string
     slippage: number
-    qty: number
+    qty: string
     status: $Enums.Status
     initialMargin: string
     createdAt?: Date | string
@@ -8258,9 +8181,10 @@ export namespace Prisma {
     id?: string
     type: $Enums.Type
     orderType: $Enums.OrderType
-    price: number
+    price: string
+    equity: string
     slippage: number
-    qty: number
+    qty: string
     status: $Enums.Status
     initialMargin: string
     createdAt?: Date | string
@@ -8276,9 +8200,10 @@ export namespace Prisma {
     type: $Enums.Type
     orderType: $Enums.OrderType
     marketId: string
-    price: number
+    price: string
+    equity: string
     slippage: number
-    qty: number
+    qty: string
     status: $Enums.Status
     initialMargin: string
     createdAt?: Date | string
@@ -8385,9 +8310,10 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     type?: EnumTypeFieldUpdateOperationsInput | $Enums.Type
     orderType?: EnumOrderTypeFieldUpdateOperationsInput | $Enums.OrderType
-    price?: FloatFieldUpdateOperationsInput | number
+    price?: StringFieldUpdateOperationsInput | string
+    equity?: StringFieldUpdateOperationsInput | string
     slippage?: IntFieldUpdateOperationsInput | number
-    qty?: FloatFieldUpdateOperationsInput | number
+    qty?: StringFieldUpdateOperationsInput | string
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     initialMargin?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8403,9 +8329,10 @@ export namespace Prisma {
     type?: EnumTypeFieldUpdateOperationsInput | $Enums.Type
     orderType?: EnumOrderTypeFieldUpdateOperationsInput | $Enums.OrderType
     marketId?: StringFieldUpdateOperationsInput | string
-    price?: FloatFieldUpdateOperationsInput | number
+    price?: StringFieldUpdateOperationsInput | string
+    equity?: StringFieldUpdateOperationsInput | string
     slippage?: IntFieldUpdateOperationsInput | number
-    qty?: FloatFieldUpdateOperationsInput | number
+    qty?: StringFieldUpdateOperationsInput | string
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     initialMargin?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8428,9 +8355,10 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     type?: EnumTypeFieldUpdateOperationsInput | $Enums.Type
     orderType?: EnumOrderTypeFieldUpdateOperationsInput | $Enums.OrderType
-    price?: FloatFieldUpdateOperationsInput | number
+    price?: StringFieldUpdateOperationsInput | string
+    equity?: StringFieldUpdateOperationsInput | string
     slippage?: IntFieldUpdateOperationsInput | number
-    qty?: FloatFieldUpdateOperationsInput | number
+    qty?: StringFieldUpdateOperationsInput | string
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     initialMargin?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8446,9 +8374,10 @@ export namespace Prisma {
     type?: EnumTypeFieldUpdateOperationsInput | $Enums.Type
     orderType?: EnumOrderTypeFieldUpdateOperationsInput | $Enums.OrderType
     marketId?: StringFieldUpdateOperationsInput | string
-    price?: FloatFieldUpdateOperationsInput | number
+    price?: StringFieldUpdateOperationsInput | string
+    equity?: StringFieldUpdateOperationsInput | string
     slippage?: IntFieldUpdateOperationsInput | number
-    qty?: FloatFieldUpdateOperationsInput | number
+    qty?: StringFieldUpdateOperationsInput | string
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     initialMargin?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8461,9 +8390,10 @@ export namespace Prisma {
     type: $Enums.Type
     orderType: $Enums.OrderType
     marketId: string
-    price: number
+    price: string
+    equity: string
     slippage: number
-    qty: number
+    qty: string
     status: $Enums.Status
     initialMargin: string
     createdAt?: Date | string
@@ -8474,8 +8404,8 @@ export namespace Prisma {
     id?: string
     taker: string
     marketId: string
-    price: number
-    qty: number
+    price: string
+    qty: string
     makerOrderId: string
     takerOrderId: string
     createdAt?: Date | string
@@ -8486,8 +8416,8 @@ export namespace Prisma {
     id?: string
     maker: string
     marketId: string
-    price: number
-    qty: number
+    price: string
+    qty: string
     makerOrderId: string
     takerOrderId: string
     createdAt?: Date | string
@@ -8498,9 +8428,10 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     type?: EnumTypeFieldUpdateOperationsInput | $Enums.Type
     orderType?: EnumOrderTypeFieldUpdateOperationsInput | $Enums.OrderType
-    price?: FloatFieldUpdateOperationsInput | number
+    price?: StringFieldUpdateOperationsInput | string
+    equity?: StringFieldUpdateOperationsInput | string
     slippage?: IntFieldUpdateOperationsInput | number
-    qty?: FloatFieldUpdateOperationsInput | number
+    qty?: StringFieldUpdateOperationsInput | string
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     initialMargin?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8515,9 +8446,10 @@ export namespace Prisma {
     type?: EnumTypeFieldUpdateOperationsInput | $Enums.Type
     orderType?: EnumOrderTypeFieldUpdateOperationsInput | $Enums.OrderType
     marketId?: StringFieldUpdateOperationsInput | string
-    price?: FloatFieldUpdateOperationsInput | number
+    price?: StringFieldUpdateOperationsInput | string
+    equity?: StringFieldUpdateOperationsInput | string
     slippage?: IntFieldUpdateOperationsInput | number
-    qty?: FloatFieldUpdateOperationsInput | number
+    qty?: StringFieldUpdateOperationsInput | string
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     initialMargin?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8531,9 +8463,10 @@ export namespace Prisma {
     type?: EnumTypeFieldUpdateOperationsInput | $Enums.Type
     orderType?: EnumOrderTypeFieldUpdateOperationsInput | $Enums.OrderType
     marketId?: StringFieldUpdateOperationsInput | string
-    price?: FloatFieldUpdateOperationsInput | number
+    price?: StringFieldUpdateOperationsInput | string
+    equity?: StringFieldUpdateOperationsInput | string
     slippage?: IntFieldUpdateOperationsInput | number
-    qty?: FloatFieldUpdateOperationsInput | number
+    qty?: StringFieldUpdateOperationsInput | string
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     initialMargin?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8542,8 +8475,8 @@ export namespace Prisma {
 
   export type FillsUpdateWithoutMakerUserInput = {
     id?: StringFieldUpdateOperationsInput | string
-    price?: FloatFieldUpdateOperationsInput | number
-    qty?: FloatFieldUpdateOperationsInput | number
+    price?: StringFieldUpdateOperationsInput | string
+    qty?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     takerUser?: UserUpdateOneRequiredWithoutTakerFillsNestedInput
@@ -8556,8 +8489,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     taker?: StringFieldUpdateOperationsInput | string
     marketId?: StringFieldUpdateOperationsInput | string
-    price?: FloatFieldUpdateOperationsInput | number
-    qty?: FloatFieldUpdateOperationsInput | number
+    price?: StringFieldUpdateOperationsInput | string
+    qty?: StringFieldUpdateOperationsInput | string
     makerOrderId?: StringFieldUpdateOperationsInput | string
     takerOrderId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8568,8 +8501,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     taker?: StringFieldUpdateOperationsInput | string
     marketId?: StringFieldUpdateOperationsInput | string
-    price?: FloatFieldUpdateOperationsInput | number
-    qty?: FloatFieldUpdateOperationsInput | number
+    price?: StringFieldUpdateOperationsInput | string
+    qty?: StringFieldUpdateOperationsInput | string
     makerOrderId?: StringFieldUpdateOperationsInput | string
     takerOrderId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8578,8 +8511,8 @@ export namespace Prisma {
 
   export type FillsUpdateWithoutTakerUserInput = {
     id?: StringFieldUpdateOperationsInput | string
-    price?: FloatFieldUpdateOperationsInput | number
-    qty?: FloatFieldUpdateOperationsInput | number
+    price?: StringFieldUpdateOperationsInput | string
+    qty?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     makerUser?: UserUpdateOneRequiredWithoutMakerFillsNestedInput
@@ -8592,8 +8525,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     maker?: StringFieldUpdateOperationsInput | string
     marketId?: StringFieldUpdateOperationsInput | string
-    price?: FloatFieldUpdateOperationsInput | number
-    qty?: FloatFieldUpdateOperationsInput | number
+    price?: StringFieldUpdateOperationsInput | string
+    qty?: StringFieldUpdateOperationsInput | string
     makerOrderId?: StringFieldUpdateOperationsInput | string
     takerOrderId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8604,8 +8537,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     maker?: StringFieldUpdateOperationsInput | string
     marketId?: StringFieldUpdateOperationsInput | string
-    price?: FloatFieldUpdateOperationsInput | number
-    qty?: FloatFieldUpdateOperationsInput | number
+    price?: StringFieldUpdateOperationsInput | string
+    qty?: StringFieldUpdateOperationsInput | string
     makerOrderId?: StringFieldUpdateOperationsInput | string
     takerOrderId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8617,8 +8550,8 @@ export namespace Prisma {
     maker: string
     taker: string
     marketId: string
-    price: number
-    qty: number
+    price: string
+    qty: string
     takerOrderId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -8629,8 +8562,8 @@ export namespace Prisma {
     maker: string
     taker: string
     marketId: string
-    price: number
-    qty: number
+    price: string
+    qty: string
     makerOrderId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -8638,8 +8571,8 @@ export namespace Prisma {
 
   export type FillsUpdateWithoutMakerOrderInput = {
     id?: StringFieldUpdateOperationsInput | string
-    price?: FloatFieldUpdateOperationsInput | number
-    qty?: FloatFieldUpdateOperationsInput | number
+    price?: StringFieldUpdateOperationsInput | string
+    qty?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     makerUser?: UserUpdateOneRequiredWithoutMakerFillsNestedInput
@@ -8653,8 +8586,8 @@ export namespace Prisma {
     maker?: StringFieldUpdateOperationsInput | string
     taker?: StringFieldUpdateOperationsInput | string
     marketId?: StringFieldUpdateOperationsInput | string
-    price?: FloatFieldUpdateOperationsInput | number
-    qty?: FloatFieldUpdateOperationsInput | number
+    price?: StringFieldUpdateOperationsInput | string
+    qty?: StringFieldUpdateOperationsInput | string
     takerOrderId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8665,8 +8598,8 @@ export namespace Prisma {
     maker?: StringFieldUpdateOperationsInput | string
     taker?: StringFieldUpdateOperationsInput | string
     marketId?: StringFieldUpdateOperationsInput | string
-    price?: FloatFieldUpdateOperationsInput | number
-    qty?: FloatFieldUpdateOperationsInput | number
+    price?: StringFieldUpdateOperationsInput | string
+    qty?: StringFieldUpdateOperationsInput | string
     takerOrderId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8674,8 +8607,8 @@ export namespace Prisma {
 
   export type FillsUpdateWithoutTakerOrderInput = {
     id?: StringFieldUpdateOperationsInput | string
-    price?: FloatFieldUpdateOperationsInput | number
-    qty?: FloatFieldUpdateOperationsInput | number
+    price?: StringFieldUpdateOperationsInput | string
+    qty?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     makerUser?: UserUpdateOneRequiredWithoutMakerFillsNestedInput
@@ -8689,8 +8622,8 @@ export namespace Prisma {
     maker?: StringFieldUpdateOperationsInput | string
     taker?: StringFieldUpdateOperationsInput | string
     marketId?: StringFieldUpdateOperationsInput | string
-    price?: FloatFieldUpdateOperationsInput | number
-    qty?: FloatFieldUpdateOperationsInput | number
+    price?: StringFieldUpdateOperationsInput | string
+    qty?: StringFieldUpdateOperationsInput | string
     makerOrderId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8701,8 +8634,8 @@ export namespace Prisma {
     maker?: StringFieldUpdateOperationsInput | string
     taker?: StringFieldUpdateOperationsInput | string
     marketId?: StringFieldUpdateOperationsInput | string
-    price?: FloatFieldUpdateOperationsInput | number
-    qty?: FloatFieldUpdateOperationsInput | number
+    price?: StringFieldUpdateOperationsInput | string
+    qty?: StringFieldUpdateOperationsInput | string
     makerOrderId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8713,9 +8646,10 @@ export namespace Prisma {
     userID: string
     type: $Enums.Type
     orderType: $Enums.OrderType
-    price: number
+    price: string
+    equity: string
     slippage: number
-    qty: number
+    qty: string
     status: $Enums.Status
     initialMargin: string
     createdAt?: Date | string
@@ -8726,8 +8660,8 @@ export namespace Prisma {
     id?: string
     maker: string
     taker: string
-    price: number
-    qty: number
+    price: string
+    qty: string
     makerOrderId: string
     takerOrderId: string
     createdAt?: Date | string
@@ -8738,9 +8672,10 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     type?: EnumTypeFieldUpdateOperationsInput | $Enums.Type
     orderType?: EnumOrderTypeFieldUpdateOperationsInput | $Enums.OrderType
-    price?: FloatFieldUpdateOperationsInput | number
+    price?: StringFieldUpdateOperationsInput | string
+    equity?: StringFieldUpdateOperationsInput | string
     slippage?: IntFieldUpdateOperationsInput | number
-    qty?: FloatFieldUpdateOperationsInput | number
+    qty?: StringFieldUpdateOperationsInput | string
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     initialMargin?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8755,9 +8690,10 @@ export namespace Prisma {
     userID?: StringFieldUpdateOperationsInput | string
     type?: EnumTypeFieldUpdateOperationsInput | $Enums.Type
     orderType?: EnumOrderTypeFieldUpdateOperationsInput | $Enums.OrderType
-    price?: FloatFieldUpdateOperationsInput | number
+    price?: StringFieldUpdateOperationsInput | string
+    equity?: StringFieldUpdateOperationsInput | string
     slippage?: IntFieldUpdateOperationsInput | number
-    qty?: FloatFieldUpdateOperationsInput | number
+    qty?: StringFieldUpdateOperationsInput | string
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     initialMargin?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8771,9 +8707,10 @@ export namespace Prisma {
     userID?: StringFieldUpdateOperationsInput | string
     type?: EnumTypeFieldUpdateOperationsInput | $Enums.Type
     orderType?: EnumOrderTypeFieldUpdateOperationsInput | $Enums.OrderType
-    price?: FloatFieldUpdateOperationsInput | number
+    price?: StringFieldUpdateOperationsInput | string
+    equity?: StringFieldUpdateOperationsInput | string
     slippage?: IntFieldUpdateOperationsInput | number
-    qty?: FloatFieldUpdateOperationsInput | number
+    qty?: StringFieldUpdateOperationsInput | string
     status?: EnumStatusFieldUpdateOperationsInput | $Enums.Status
     initialMargin?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8782,8 +8719,8 @@ export namespace Prisma {
 
   export type FillsUpdateWithoutMarketInput = {
     id?: StringFieldUpdateOperationsInput | string
-    price?: FloatFieldUpdateOperationsInput | number
-    qty?: FloatFieldUpdateOperationsInput | number
+    price?: StringFieldUpdateOperationsInput | string
+    qty?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     makerUser?: UserUpdateOneRequiredWithoutMakerFillsNestedInput
@@ -8796,8 +8733,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     maker?: StringFieldUpdateOperationsInput | string
     taker?: StringFieldUpdateOperationsInput | string
-    price?: FloatFieldUpdateOperationsInput | number
-    qty?: FloatFieldUpdateOperationsInput | number
+    price?: StringFieldUpdateOperationsInput | string
+    qty?: StringFieldUpdateOperationsInput | string
     makerOrderId?: StringFieldUpdateOperationsInput | string
     takerOrderId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8808,8 +8745,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     maker?: StringFieldUpdateOperationsInput | string
     taker?: StringFieldUpdateOperationsInput | string
-    price?: FloatFieldUpdateOperationsInput | number
-    qty?: FloatFieldUpdateOperationsInput | number
+    price?: StringFieldUpdateOperationsInput | string
+    qty?: StringFieldUpdateOperationsInput | string
     makerOrderId?: StringFieldUpdateOperationsInput | string
     takerOrderId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string

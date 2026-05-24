@@ -133,6 +133,7 @@ exports.Prisma.OrdersScalarFieldEnum = {
   orderType: 'orderType',
   marketId: 'marketId',
   price: 'price',
+  equity: 'equity',
   slippage: 'slippage',
   qty: 'qty',
   status: 'status',
