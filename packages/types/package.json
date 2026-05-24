@@ -1,5 +1,5 @@
 {
-  "name": "db-poller",
+  "name": "types",
   "module": "index.ts",
   "type": "module",
   "private": true,
@@ -10,9 +10,9 @@
     "typescript": "^5"
   },
   "dependencies": {
-    "redis": "^5.12.1",
-    "db": "workspace:*",
-    "env": "workspace*",
-    "types": "workspace*"
+    "zod": "^4.4.3"
+  },
+  "exports": {
+    ".": "./index.ts"
   }
 }

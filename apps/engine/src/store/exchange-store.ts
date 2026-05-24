@@ -7,15 +7,13 @@ export type EngineEventType =
   | "ORDER_FILLED"
   | "ORDER_CANCELLED"
   | "POSITION_UPDATED"
+  | "CREATE_FILL"
   | "USER_LIQUIDATED";
 
 export interface Users {
   userId: string;
-  // username: string;
-  // password: number; //uncomment if needed
   collateral: Collateral;
   positions: Position[];
-  orders: Orders[];
 }
 
 export interface Collateral {
@@ -30,19 +28,6 @@ export interface Position {
   margin: number;
   liquidationPrice: number;
   averagePrice: number;
-  createdAt: number;
-}
-
-export interface Orders {
-  orderId: string;
-  market: string;
-  type: PositionSide;
-  qty: number;
-  margin: number;
-  orderType: OrderType;
-  price: number;
-  slippage: number;
-  status: OrderStatus;
   createdAt: number;
 }
 
@@ -103,19 +88,8 @@ export interface DepthResponse {
   asks: DepthLevel[];
 }
 
-export interface Fill {
-  maker: string;
-  taker: string;
-  market: string;
-  qty: number;
-  price: number;
-  makerOrderId: string;
-  takerOrderId: string;
-  createdAt: number;
-}
-
 export const ORDERBOOKS: Orderbooks = {};
 export let USERS: Users[] = [];
-export const FILLS: Fill[] = [];
 
 export const MARKET_PRICES: Map<string, number> = new Map();
+export const MARKET_WITH_IDS: Map<string, string> = new Map();

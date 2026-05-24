@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { createClient } from "redis";
-import { env } from "./src/utils/env.js";
+import { env } from "env";
 import type {
   CancelOrderInput,
   CreateOrderInput,
@@ -12,13 +12,12 @@ import LiveDataFetch from "./src/ws/connection.js";
 import {
   GetClosedPositions,
   GetEquity,
-  GetFills,
-  GetOpenOrder,
   GetOpenPositions,
-  GetOrder,
 } from "./src/helpers/get-endpoints.js";
 import CreateOnRamp from "./src/helpers/create-onramp.js";
-import type { RedisStreamResponse } from "./src/types/redis-stream.js";
+import type { RedisStreamResponse } from "types";
+import ProcessMarketUpdate from "./src/utils/market-maker.js";
+import { ExportToIds } from "./src/utils/market-to-id.js";
 
 const GROUP_NAME = "engine-group";
 const CONSUMER_NAME = "engine-" + process.pid;
@@ -49,6 +48,7 @@ export interface EngineResponse {
 }
 
 LiveDataFetch();
+ExportToIds();
 
 const brokerClient = createClient({ url: env.redisUrl }).on(
   "error",
@@ -107,15 +107,6 @@ function handleEngineRequest(message: EngineRequest): unknown {
 
     case "get_closed_positions":
       return GetClosedPositions(message.payload as unknown as GetPositionInput);
-
-    case "get_open_order":
-      return GetOpenOrder(message.payload as unknown as GetPositionInput);
-
-    case "get_order":
-      return GetOrder(message.payload as unknown as GetPositionInput);
-
-    case "get_fills":
-      return GetFills(message.payload as unknown as { userId: string });
 
     default:
       throw new Error("Invalid request sent");

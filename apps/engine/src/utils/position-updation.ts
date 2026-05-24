@@ -1,11 +1,11 @@
 import {
-  FILLS,
   USERS,
   type Bid,
   type CreateOrderInput,
 } from "../store/exchange-store";
+import { PublishToEngine } from "./publish-to-poller";
 
-export function PositionUpdation(
+export async function PositionUpdation(
   data: CreateOrderInput,
   currentMarketPrice: number,
   orderId: string,
@@ -25,11 +25,7 @@ export function PositionUpdation(
     throw new Error("User not found while billing");
   }
 
-  const index = userData.orders.findIndex((x) => x.orderId === orderId);
-  if (index <= -1 || !userData.orders[index]) {
-    throw new Error("Invalid index found");
-  }
-  userData.orders[index].status = "filled";
+  await PublishToEngine("ORDER_FILLED", { orderId });
 
   const existingPositionIndex = userData.positions.findIndex(
     (x) => x.market === data.market,
@@ -68,14 +64,22 @@ export function PositionUpdation(
     }
   }
 
-  FILLS.push({
-    maker: data.userId,
-    taker: "", // update later
-    market: data.market,
-    qty: data.qty,
-    price: currentMarketPrice,
-    makerOrderId: orderId,
-    takerOrderId: "", // update later
-    createdAt: Date.now(),
-  });
+  const fills = [
+    {
+      maker: data.userId,
+      taker: "", // update later
+      market: data.market,
+      qty: data.qty,
+      price: currentMarketPrice,
+      makerOrderId: orderId,
+      takerOrderId: "", // update later
+    },
+  ];
+
+  await PublishToEngine("CREATE_FILL", { fills });
+
+  return {
+    fills,
+    order_status: "FILLED",
+  };
 }

@@ -1,6 +1,6 @@
 import { responseClient } from "../..";
 import type { EngineEventType } from "../store/exchange-store";
-import { env } from "./env";
+import { env } from "env";
 
 export async function PublishToEngine(
   type: EngineEventType,

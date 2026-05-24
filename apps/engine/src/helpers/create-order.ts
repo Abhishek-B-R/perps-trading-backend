@@ -1,5 +1,4 @@
 import {
-  FILLS,
   MARKET_PRICES,
   ORDERBOOKS,
   USERS,
@@ -10,7 +9,6 @@ import { PositionUpdation } from "../utils/position-updation";
 import { PublishToEngine } from "../utils/publish-to-poller";
 
 export default async function CreateOrder(data: CreateOrderInput) {
-  //TODO: input validation
   if (
     !MARKET_PRICES.has(data.market) &&
     !MARKET_PRICES.has(data.market + "USDT")
@@ -25,7 +23,6 @@ export default async function CreateOrder(data: CreateOrderInput) {
       userId: data.userId,
       collateral: { available: 0, locked: 0 },
       positions: [],
-      orders: [],
     };
     USERS.push(newuser);
     userData = newuser;
@@ -35,19 +32,6 @@ export default async function CreateOrder(data: CreateOrderInput) {
   if (userData.collateral.available < data.equity) {
     throw new Error("insufficient balance to do this transaction");
   }
-
-  userData.orders.push({
-    orderId,
-    market: data.market,
-    type: data.positionType,
-    qty: data.qty,
-    margin: data.equity, // update later
-    orderType: data.orderType,
-    price: data.price ?? 0,
-    slippage: data.slippage ?? 0,
-    status: "open",
-    createdAt: Date.now(),
-  });
 
   await PublishToEngine("ORDER_CREATED", {
     orderId,
@@ -87,7 +71,14 @@ export default async function CreateOrder(data: CreateOrderInput) {
     //
     // also write that infinite check for orderbook matching logic
 
-    PositionUpdation(data, currentMarketPrice, orderId);
+    const updates = await PositionUpdation(data, currentMarketPrice, orderId);
+    return {
+      orderId,
+      status: updates.order_status,
+      filledQty: data.qty,
+      averagePrice: data.price,
+      fills: updates.fills,
+    };
   } else {
     let currentBook = ORDERBOOKS[data.market];
     if (!currentBook) {
@@ -134,20 +125,10 @@ export default async function CreateOrder(data: CreateOrderInput) {
     };
   }
 
-  const updatedOrderData = userData.orders.find((x) => x.orderId === orderId);
-  if (!updatedOrderData) {
-    throw new Error("no order with such orderid found");
-  }
-
-  const fills = FILLS.map(
-    (x) => x.makerOrderId === orderId || x.takerOrderId === orderId,
-  );
-
   return {
     orderId,
-    status: updatedOrderData.status,
-    filledQty: updatedOrderData.qty,
-    averagePrice: updatedOrderData.price,
-    fills,
+    status: "open",
+    filledQty: 0,
+    averagePrice: 0,
   };
 }

@@ -42,6 +42,10 @@ async function processMessage(streamMessage: StreamMessageType) {
       await persistOrderStatus(event, "Cancelled");
       break;
 
+    case "ORDER_PARTIALLY_FILLED":
+      await persistOrderStatus(event, "PartiallyFilled");
+      break;
+
     default:
       throw new Error(`Unknow event type: ${event.type}`);
   }

@@ -23,6 +23,7 @@
     "jsonwebtoken": "^9.0.3",
     "redis": "^5.12.1",
     "zod": "^4.4.3",
-    "env": "workspace*"
+    "env": "workspace*",
+    "types": "workspace*"
   }
 }

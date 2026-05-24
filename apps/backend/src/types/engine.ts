@@ -22,14 +22,3 @@ export interface EngineResponse {
   data?: unknown;
   error?: string;
 }
-
-export interface RedisStreamResponse {
-  name: string;
-  messages: {
-    id: string;
-    message: {
-      payload: string;
-      correlationId?: string;
-    };
-  }[];
-}

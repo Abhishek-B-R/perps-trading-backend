@@ -13,7 +13,12 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "@types/ws": "^8.18.1",
     "axios": "^1.16.1",
-    "redis": "^5.12.1"
+    "env": "workspace*",
+    "redis": "^5.12.1",
+    "types": "workspace*",
+    "ws": "^8.21.0",
+    "db": "workspace*"
   }
 }

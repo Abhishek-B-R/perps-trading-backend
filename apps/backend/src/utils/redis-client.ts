@@ -4,12 +4,13 @@ import type {
   EngineCommandType,
   EngineRequest,
   EngineResponse,
-  RedisStreamResponse,
 } from "../types/engine";
+
 import {
   resolveEngineResponse,
   waitForEngineResponse,
 } from "../store/pending-responses";
+import type { RedisStreamResponse } from "types";
 
 const publisher = createClient({ url: env.redisUrl }).on("error", (error) => {
   console.error("Redis Publisher client error - " + error);
