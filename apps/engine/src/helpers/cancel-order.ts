@@ -5,15 +5,15 @@ import {
   USERS,
   type CancelOrderInput,
 } from "../store/exchange-store";
-import { PublishToEngine } from "../utils/publish-to-poller";
+import { PublishToPoller } from "../utils/publish-to-poller";
 
 export default async function CancelOrder(data: CancelOrderInput) {
-  const existingUser = USERS.find((x) => x.userId === data.userId);
+  const existingUser = USERS.get(data.userId);
   if (!existingUser) {
     throw new Error("user not found");
   }
 
-  await PublishToEngine("ORDER_CANCELLED", { orderId: data.orderId });
+  await PublishToPoller("ORDER_CANCELLED", { orderId: data.orderId });
 
   const orderInfoResponse = await fetch(
     `http://localhost:3000/orders/${data.orderId}`,
@@ -30,14 +30,15 @@ export default async function CancelOrder(data: CancelOrderInput) {
 
   const existingBidOrAsk =
     orderInfo.type === "LONG"
-      ? ORDERBOOKS[market_slug]?.bids
-      : ORDERBOOKS[market_slug]?.asks;
+      ? ORDERBOOKS.get(market_slug)?.bids
+      : ORDERBOOKS.get(market_slug)?.asks;
   if (!existingBidOrAsk) {
     throw new Error("no bids or asks found for this market");
   }
 
-  const priceBucket =
-    existingBidOrAsk[parseFloat(parseFloat(orderInfo.price).toFixed(2))];
+  const priceBucket = existingBidOrAsk.get(
+    parseFloat(parseFloat(orderInfo.price).toFixed(2)),
+  );
   if (!priceBucket) {
     throw new Error("no existing price bucket for this market");
   }
@@ -52,12 +53,13 @@ export default async function CancelOrder(data: CancelOrderInput) {
   priceBucket.availableQty -= parseFloat(orderInfo.qty);
 
   if (priceBucket.availableQty <= 0) {
-    delete existingBidOrAsk[parseFloat(parseFloat(orderInfo.price).toFixed(2))];
+    const price = Number(parseFloat(orderInfo.price).toFixed(2));
+    existingBidOrAsk.delete(price);
   }
 
   existingUser.collateral.locked -= parseFloat(orderInfo.equity);
   existingUser.collateral.available += parseFloat(orderInfo.equity);
-  await PublishToEngine("ORDER_CANCELLED", {
+  await PublishToPoller("ORDER_CANCELLED", {
     orderId: orderInfo.id,
   });
 

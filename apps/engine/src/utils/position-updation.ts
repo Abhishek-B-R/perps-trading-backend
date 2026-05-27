@@ -1,9 +1,5 @@
-import {
-  USERS,
-  type Bid,
-  type CreateOrderInput,
-} from "../store/exchange-store";
-import { PublishToEngine } from "./publish-to-poller";
+import { USERS, type CreateOrderInput } from "../store/exchange-store";
+import { PublishToPoller } from "./publish-to-poller";
 
 export async function PositionUpdation(
   data: CreateOrderInput,
@@ -20,12 +16,12 @@ export async function PositionUpdation(
   //
   // also write that infinite check for orderbook matching logic
 
-  const userData = USERS.find((x) => x.userId === data.userId);
+  const userData = USERS.get(data.userId);
   if (!userData) {
     throw new Error("User not found while billing");
   }
 
-  await PublishToEngine("ORDER_FILLED", { orderId });
+  await PublishToPoller("ORDER_FILLED", { orderId });
 
   const existingPositionIndex = userData.positions.findIndex(
     (x) => x.market === data.market,
@@ -76,7 +72,7 @@ export async function PositionUpdation(
     },
   ];
 
-  await PublishToEngine("CREATE_FILL", { fills });
+  await PublishToPoller("CREATE_FILL", { fills });
 
   return {
     fills,

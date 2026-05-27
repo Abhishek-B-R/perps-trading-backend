@@ -2,7 +2,7 @@ import { responseClient } from "../..";
 import type { EngineEventType } from "../store/exchange-store";
 import { env } from "env";
 
-export async function PublishToEngine(
+export async function PublishToPoller(
   type: EngineEventType,
   payload: Record<string, unknown>,
 ): Promise<void> {

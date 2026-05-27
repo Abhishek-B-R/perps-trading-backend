@@ -1,7 +1,7 @@
 import { USERS, type GetPositionInput } from "../store/exchange-store";
 
 export function GetEquity(data: { userId: string }) {
-  const userInfo = USERS.find((x) => x.userId === data.userId);
+  const userInfo = USERS.get(data.userId);
   if (!userInfo) {
     throw new Error("user not found");
   }
@@ -14,7 +14,7 @@ export function GetEquity(data: { userId: string }) {
 }
 
 export function GetOpenPositions(data: GetPositionInput) {
-  const userInfo = USERS.find((x) => x.userId === data.userId);
+  const userInfo = USERS.get(data.userId);
   if (!userInfo) {
     throw new Error("user not found");
   }

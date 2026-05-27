@@ -10,8 +10,7 @@ export type EngineEventType =
   | "CREATE_FILL"
   | "USER_LIQUIDATED";
 
-export interface Users {
-  userId: string;
+export interface User {
   collateral: Collateral;
   positions: Position[];
 }
@@ -36,20 +35,24 @@ export type Bid = {
   openOrders: {
     userId: string;
     qty: number;
-    filledQty: number;
+    remainingQty: number;
     orderId: string;
     createdAt: number;
   }[];
 };
 
 export interface Orderbook {
-  bids: Record<number, Bid>;
-  asks: Record<number, Bid>;
+  bids: Map<number, Bid>;
+  asks: Map<number, Bid>;
+
+  bidPrices: number[];
+  askPrices: number[];
+
   lastTradedPrice: number;
   indexPrice: number;
 }
 
-type Orderbooks = Record<string, Orderbook>;
+type Orderbooks = Map<string, Orderbook>;
 
 export interface CreateOrderInput {
   userId: string;
@@ -88,8 +91,22 @@ export interface DepthResponse {
   asks: DepthLevel[];
 }
 
-export const ORDERBOOKS: Orderbooks = {};
-export let USERS: Users[] = [];
+export const ORDERBOOKS: Orderbooks = new Map();
+export let USERS = new Map<string, User>();
 
 export const MARKET_PRICES: Map<string, number> = new Map();
 export const MARKET_WITH_IDS: Map<string, string> = new Map();
+
+export interface IncomingOrderType {
+  orderId: string;
+  userId: string;
+  market: string;
+  side: "buy" | "sell";
+  positionType: PositionSide;
+  type: OrderType;
+  price: number;
+  qty: number;
+  equity: number;
+  remainingQuantity: number;
+  createdAt: number;
+}

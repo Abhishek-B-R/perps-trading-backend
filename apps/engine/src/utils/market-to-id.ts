@@ -8,7 +8,7 @@ export function ExportToIds() {
       where: {},
     });
     marketsData.forEach((x) => {
-      MARKET_WITH_IDS.set(x.id, x.marketSlug);
+      MARKET_WITH_IDS.set(x.id, x.marketSlug + "USDT");
     });
   }, 5000);
 }

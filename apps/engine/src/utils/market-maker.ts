@@ -19,7 +19,7 @@ export default function ProcessMarketUpdate({
       if (parseFloat(priceStr) <= marketPrice) {
         const openOrders = [...bid.openOrders];
         openOrders.forEach((x) => {
-          const userInfo = USERS.find((user) => user.userId === x.userId);
+          const userInfo = USERS.get(x.userId);
           if (!userInfo) {
             console.error("user not found");
             return;

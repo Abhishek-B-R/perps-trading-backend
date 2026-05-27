@@ -7,7 +7,7 @@ export default function CreateOnRamp({
   userId: string;
   price: number;
 }) {
-  const existingUser = USERS.find((x) => x.userId === userId);
+  const existingUser = USERS.get(userId);
   if (!existingUser) {
     throw new Error("user not found");
   }
