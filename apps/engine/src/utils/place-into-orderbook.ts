@@ -11,6 +11,14 @@ export function PlaceIntoOrderbook({
   // put order in orderbook
   const book = getOrCreateOrderbook(incomingOrder.market);
   if (type === "bid") {
+    if (!book.bids.has(incomingOrder.price)) {
+      insertSorted({
+        priceArray: book.bidPrices,
+        price: incomingOrder.price,
+        descending: true,
+      });
+    }
+
     const bidAvailableQty =
       book.bids.get(incomingOrder.price)?.availableQty ?? 0;
 
@@ -28,11 +36,15 @@ export function PlaceIntoOrderbook({
       availableQty: bidAvailableQty + incomingOrder.remainingQuantity,
       openOrders: bidCurrentQty,
     });
-
-    if (!book.bids.has(incomingOrder.price)) {
-      insertSorted({ priceArray: book.bidPrices, price: incomingOrder.price });
-    }
   } else {
+    if (!book.asks.has(incomingOrder.price)) {
+      insertSorted({
+        priceArray: book.askPrices,
+        price: incomingOrder.price,
+        descending: false,
+      });
+    }
+
     const askAvailableQty =
       book.asks.get(incomingOrder.price)?.availableQty ?? 0;
 
@@ -56,10 +68,13 @@ export function PlaceIntoOrderbook({
 function insertSorted({
   priceArray,
   price,
+  descending,
 }: {
   priceArray: number[];
   price: number;
+  descending: boolean;
 }) {
-  priceArray = priceArray.sort();
-  priceArray.unshift(price);
+  priceArray.push(price);
+
+  priceArray.sort((a, b) => (descending ? b - a : a - b));
 }

@@ -18,7 +18,7 @@ export function RemoveFromOrderbook({
     marketData.asks.delete(price);
     marketData.askPrices = marketData.askPrices.filter((x) => x !== price);
   } else {
-    if (!marketData || !marketData === undefined) {
+    if (!marketData) {
       throw new Error("no such book found for this market " + market);
     }
     marketData.bids.delete(price);

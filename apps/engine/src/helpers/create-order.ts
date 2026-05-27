@@ -8,6 +8,7 @@ import { PublishToPoller } from "../utils/publish-to-poller";
 import { RemoveFromOrderbook } from "../utils/remove-from-orderbook";
 import { getOrCreateOrderbook, getOrCreateUser } from "./get-or-create";
 import { PlaceIntoOrderbook } from "../utils/place-into-orderbook";
+import { LockFunds, UnlockFunds } from "../utils/lock-unlock-funds";
 
 export default async function CreateOrder(data: CreateOrderInput) {
   if (!MARKET_PRICES.has(data.market + "USDT")) {
@@ -62,8 +63,7 @@ export default async function CreateOrder(data: CreateOrderInput) {
   });
 
   // lock user equity
-  userData.collateral.available -= incomingOrder.equity;
-  userData.collateral.locked += incomingOrder.equity;
+  LockFunds(userData, incomingOrder.equity);
 
   const book = getOrCreateOrderbook(incomingOrder.market);
 
@@ -74,8 +74,7 @@ export default async function CreateOrder(data: CreateOrderInput) {
         : book.bidPrices[0];
     if (bestPrice === undefined) {
       if (incomingOrder.type === "market") {
-        userData.collateral.locked -= incomingOrder.equity;
-        userData.collateral.available += incomingOrder.equity;
+        UnlockFunds(userData, incomingOrder.equity);
         break;
       }
 
@@ -90,7 +89,7 @@ export default async function CreateOrder(data: CreateOrderInput) {
       {
         const totalQty = book.asks.get(bestPrice)?.availableQty;
         const ask = book.asks.get(bestPrice)?.openOrders;
-        if (!totalQty || !ask || totalQty <= 0) {
+        if (!ask || !totalQty || totalQty <= 0) {
           RemoveFromOrderbook({
             price: bestPrice,
             market: incomingOrder.market,
@@ -110,13 +109,13 @@ export default async function CreateOrder(data: CreateOrderInput) {
 
           await PublishToPoller("CREATE_FILL", {
             //complete it neatly
-            maker: incomingOrder.userId,
-            taker: order.userId,
+            maker: order.userId,
+            taker: incomingOrder.userId,
             market: incomingOrder.market,
             qty: matchedQuantity,
             price: bestPrice,
-            makerOrderId: incomingOrder.orderId,
-            takerOrderId: order.orderId,
+            makerOrderId: order.orderId,
+            takerOrderId: incomingOrder.orderId,
           });
 
           // update the filled quantity field in Orders table of db, might have to create a new field
@@ -139,15 +138,23 @@ export default async function CreateOrder(data: CreateOrderInput) {
             bestPrice,
           )!.availableQty -= matchedQuantity;
           incomingOrder.remainingQuantity -= matchedQuantity;
+          order.remainingQty -= matchedQuantity;
 
-          if (incomingOrder.remainingQuantity === 0) {
+          if (currentOpenOrders[index]!.remainingQty <= 0) {
             ORDERBOOKS.get(incomingOrder.market)!
               .asks.get(bestPrice)!
               .openOrders.splice(index, 1); // remove order from orderbook since qty is zero now
-          } else {
-            ORDERBOOKS.get(incomingOrder.market)!.asks.get(
-              bestPrice,
-            )!.openOrders[index]!.remainingQty -= matchedQuantity; // reduce order qty since its not fully filled
+          }
+
+          const level = ORDERBOOKS.get(incomingOrder.market)!.asks.get(
+            bestPrice,
+          );
+          if (level && level.availableQty <= 0) {
+            RemoveFromOrderbook({
+              price: bestPrice,
+              market: incomingOrder.market,
+              type: "ask",
+            });
           }
         }
 
@@ -157,8 +164,16 @@ export default async function CreateOrder(data: CreateOrderInput) {
         PublishToPoller("ORDER_CANCELLED", {
           orderId: incomingOrder.orderId,
         });
+
+        // refund unused collateral
+        UnlockFunds(userData, incomingOrder.equity);
+
+        break;
       } else {
-        PlaceIntoOrderbook({ incomingOrder, type: "bid" });
+        PlaceIntoOrderbook({
+          incomingOrder,
+          type: incomingOrder.side === "buy" ? "bid" : "ask",
+        });
         break;
       }
     }
