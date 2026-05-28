@@ -15,8 +15,8 @@ export async function persistOrder(event: EventType) {
   await prisma.orders.create({
     data: {
       id: parsedPayload.orderId,
-      userID: "", //update later
-      type: parsedPayload.type === "long" ? "LONG" : "SHORT",
+      userID: parsedPayload.userId,
+      type: parsedPayload.positionType === "long" ? "LONG" : "SHORT",
       orderType: parsedPayload.orderType === "market" ? "MARKET" : "LIMIT",
       marketId: market.id,
       price: parsedPayload.price.toString() ?? "0",

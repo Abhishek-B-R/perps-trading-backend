@@ -41,7 +41,7 @@ export default async function CreateOrder(data: CreateOrderInput) {
     market: data.market,
     side: data.positionType === "long" ? "buy" : "sell",
     positionType: data.positionType,
-    type: data.orderType,
+    orderType: data.orderType,
     price: data.price ?? slippagePrice,
     qty: data.qty,
     equity: data.equity,
@@ -55,8 +55,9 @@ export default async function CreateOrder(data: CreateOrderInput) {
 
   await PublishToPoller("ORDER_CREATED", {
     orderId,
+    userId: data.userId,
     market: data.market,
-    type: data.positionType,
+    positionType: data.positionType,
     qty: data.qty,
     margin: data.equity,
     orderType: data.orderType,
@@ -77,7 +78,7 @@ export default async function CreateOrder(data: CreateOrderInput) {
         ? book.askPrices[0]
         : book.bidPrices[0];
     if (bestPrice === undefined) {
-      if (incomingOrder.type === "market") {
+      if (incomingOrder.orderType === "market") {
         UnlockFunds(userData, incomingOrder.equity);
         break;
       }
@@ -167,7 +168,7 @@ export default async function CreateOrder(data: CreateOrderInput) {
           returnStatus = "partially_filled";
         }
         // update order status as filled fully if it reached here
-      } else if (incomingOrder.type === "market") {
+      } else if (incomingOrder.orderType === "market") {
         // cancel order as it didnt match
         PublishToPoller("ORDER_CANCELLED", {
           orderId: incomingOrder.orderId,

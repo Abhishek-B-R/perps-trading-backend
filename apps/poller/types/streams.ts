@@ -32,8 +32,9 @@ export interface RedisStreamResponse {
 
 export interface CreateOrder {
   orderId: string;
+  userId: string;
   market: string;
-  type: "long" | "short";
+  positionType: "long" | "short";
   qty: number;
   margin: number;
   orderType: "limit" | "market";

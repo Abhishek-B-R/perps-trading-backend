@@ -103,7 +103,7 @@ export interface IncomingOrderType {
   market: string;
   side: "buy" | "sell";
   positionType: PositionSide;
-  type: OrderType;
+  orderType: OrderType;
   price: number;
   qty: number;
   equity: number;
