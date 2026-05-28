@@ -2,7 +2,9 @@ import {
   MARKET_PRICES,
   ORDERBOOKS,
   type CreateOrderInput,
+  type Fill,
   type IncomingOrderType,
+  type OrderStatus,
 } from "../store/exchange-store";
 import { PublishToPoller } from "../utils/publish-to-poller";
 import { RemoveFromOrderbook } from "../utils/remove-from-orderbook";
@@ -14,6 +16,8 @@ export default async function CreateOrder(data: CreateOrderInput) {
   if (!MARKET_PRICES.has(data.market + "USDT")) {
     throw new Error("Invalid market data");
   }
+  const fills: Fill[] = [];
+  let returnStatus: OrderStatus = "open";
 
   // get current balance of that market
   let currentMarketPrice = MARKET_PRICES.get(
@@ -54,7 +58,7 @@ export default async function CreateOrder(data: CreateOrderInput) {
     market: data.market,
     type: data.positionType,
     qty: data.qty,
-    margin: data.equity, // update later
+    margin: data.equity,
     orderType: data.orderType,
     price: data.price ?? 0,
     slippage: data.slippage ?? 0,
@@ -83,10 +87,7 @@ export default async function CreateOrder(data: CreateOrderInput) {
     }
 
     if (incomingOrder.positionType === "long") {
-      if (
-        bestPrice <= incomingOrder.price
-      ) // add slippage logic for market orders
-      {
+      if (bestPrice <= incomingOrder.price) {
         const totalQty = book.asks.get(bestPrice)?.availableQty;
         const ask = book.asks.get(bestPrice)?.openOrders;
         if (!ask || !totalQty || totalQty <= 0) {
@@ -96,7 +97,6 @@ export default async function CreateOrder(data: CreateOrderInput) {
             type: "ask",
           });
           continue;
-          // if no liquidity exists, then this might go infinite loop
         }
 
         const orders = [...ask];
@@ -107,8 +107,7 @@ export default async function CreateOrder(data: CreateOrderInput) {
             incomingOrder.remainingQuantity,
           );
 
-          await PublishToPoller("CREATE_FILL", {
-            //complete it neatly
+          const fill = {
             maker: order.userId,
             taker: incomingOrder.userId,
             market: incomingOrder.market,
@@ -116,7 +115,11 @@ export default async function CreateOrder(data: CreateOrderInput) {
             price: bestPrice,
             makerOrderId: order.orderId,
             takerOrderId: incomingOrder.orderId,
-          });
+            createdAt: Date.now(),
+          };
+
+          await PublishToPoller("CREATE_FILL", fill);
+          fills.push(fill);
 
           // update the filled quantity field in Orders table of db, might have to create a new field
           // for asker here and then for buyer after this loop ends
@@ -155,9 +158,14 @@ export default async function CreateOrder(data: CreateOrderInput) {
               market: incomingOrder.market,
               type: "ask",
             });
-          }
+          } // remove that price point's object entirely since its of no use if no orders in it
         }
 
+        if (incomingOrder.remainingQuantity === 0) {
+          returnStatus = "filled";
+        } else {
+          returnStatus = "partially_filled";
+        }
         // update order status as filled fully if it reached here
       } else if (incomingOrder.type === "market") {
         // cancel order as it didnt match
@@ -168,21 +176,40 @@ export default async function CreateOrder(data: CreateOrderInput) {
         // refund unused collateral
         UnlockFunds(userData, incomingOrder.equity);
 
+        if (fills.length > 0) {
+          returnStatus = "partially_filled";
+        } else {
+          returnStatus = "cancelled";
+        }
+
         break;
       } else {
         PlaceIntoOrderbook({
           incomingOrder,
           type: incomingOrder.side === "buy" ? "bid" : "ask",
         });
+
+        if (fills.length > 0) {
+          returnStatus = "partially_filled";
+        } else {
+          returnStatus = "open";
+        }
+
         break;
       }
     }
   }
 
+  let totalPrice: number = 0;
+  fills.forEach((x) => {
+    totalPrice += x.price * x.qty;
+  });
+  const averagePrice = totalPrice / fills.length;
   return {
     orderId,
-    status: "open",
-    filledQty: 0,
-    averagePrice: 0,
+    status: returnStatus,
+    filledQty: incomingOrder.qty - incomingOrder.remainingQuantity,
+    averagePrice: totalPrice > 0 ? averagePrice : 0,
+    fills,
   };
 }

@@ -110,3 +110,14 @@ export interface IncomingOrderType {
   remainingQuantity: number;
   createdAt: number;
 }
+
+export interface Fill {
+  maker: string;
+  taker: string;
+  market: string;
+  qty: number;
+  price: number;
+  makerOrderId: string;
+  takerOrderId: string;
+  createdAt: number;
+}
