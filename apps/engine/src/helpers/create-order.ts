@@ -175,7 +175,128 @@ export default async function CreateOrder(data: CreateOrderInput) {
         });
 
         // refund unused collateral
-        UnlockFunds(userData, incomingOrder.equity);
+        const filledQty = incomingOrder.qty - incomingOrder.remainingQuantity;
+        const usedMargin =
+          (incomingOrder.equity * filledQty) / incomingOrder.qty;
+        const refund = incomingOrder.equity - usedMargin;
+
+        UnlockFunds(userData, refund);
+
+        if (fills.length > 0) {
+          returnStatus = "partially_filled";
+        } else {
+          returnStatus = "cancelled";
+        }
+
+        break;
+      } else {
+        PlaceIntoOrderbook({
+          incomingOrder,
+          type: incomingOrder.side === "buy" ? "bid" : "ask",
+        });
+
+        if (fills.length > 0) {
+          returnStatus = "partially_filled";
+        } else {
+          returnStatus = "open";
+        }
+
+        break;
+      }
+    } else {
+      if (bestPrice >= incomingOrder.price) {
+        const totalQty = book.bids.get(bestPrice)?.availableQty;
+        const bid = book.bids.get(bestPrice)?.openOrders;
+        if (!bid || !totalQty || totalQty <= 0) {
+          RemoveFromOrderbook({
+            price: bestPrice,
+            market: incomingOrder.market,
+            type: "bid",
+          });
+          continue;
+        }
+
+        const orders = [...bid];
+        for (const order of orders) {
+          if (incomingOrder.remainingQuantity === 0) break;
+          const matchedQuantity = Math.min(
+            order.remainingQty,
+            incomingOrder.remainingQuantity,
+          );
+
+          const fill = {
+            maker: incomingOrder.userId,
+            taker: order.userId,
+            market: incomingOrder.market,
+            qty: matchedQuantity,
+            price: bestPrice,
+            makerOrderId: incomingOrder.orderId,
+            takerOrderId: order.orderId,
+            createdAt: Date.now(),
+          };
+
+          await PublishToPoller("CREATE_FILL", fill);
+          fills.push(fill);
+
+          // update the filled quantity field in Orders table of db, might have to create a new field
+          // for asker here and then for buyer after this loop ends
+
+          const currentOpenOrders = ORDERBOOKS.get(
+            incomingOrder.market,
+          )!.bids.get(bestPrice)!.openOrders;
+
+          const index = currentOpenOrders.findIndex(
+            (x) => x.orderId === order.orderId,
+          );
+          if (index === -1) {
+            throw new Error(
+              "order not found in orderbook while reducing qty due to matchmaking",
+            );
+          }
+
+          ORDERBOOKS.get(incomingOrder.market)!.bids.get(
+            bestPrice,
+          )!.availableQty -= matchedQuantity;
+          incomingOrder.remainingQuantity -= matchedQuantity;
+          order.remainingQty -= matchedQuantity;
+
+          if (currentOpenOrders[index]!.remainingQty <= 0) {
+            ORDERBOOKS.get(incomingOrder.market)!
+              .bids.get(bestPrice)!
+              .openOrders.splice(index, 1); // remove order from orderbook since qty is zero now
+          }
+
+          const level = ORDERBOOKS.get(incomingOrder.market)!.bids.get(
+            bestPrice,
+          );
+          if (level && level.availableQty <= 0) {
+            RemoveFromOrderbook({
+              price: bestPrice,
+              market: incomingOrder.market,
+              type: "bid",
+            });
+          } // remove that price point's object entirely since its of no use if no orders in it
+        }
+
+        if (incomingOrder.remainingQuantity === 0) {
+          returnStatus = "filled";
+        } else {
+          returnStatus = "partially_filled";
+        }
+        // update order status as filled fully if it reached here
+      } else if (incomingOrder.orderType === "market") {
+        // cancel order as it didnt match
+        PublishToPoller("ORDER_CANCELLED", {
+          orderId: incomingOrder.orderId,
+        });
+
+        // refund unused collateral
+        const filledQty = incomingOrder.qty - incomingOrder.remainingQuantity;
+        const usedMargin =
+          (incomingOrder.equity * filledQty) / incomingOrder.qty;
+        const refund = incomingOrder.equity - usedMargin;
+
+        UnlockFunds(userData, refund);
 
         if (fills.length > 0) {
           returnStatus = "partially_filled";
@@ -202,10 +323,12 @@ export default async function CreateOrder(data: CreateOrderInput) {
   }
 
   let totalPrice: number = 0;
+  let totalQty: number = 0;
   fills.forEach((x) => {
     totalPrice += x.price * x.qty;
+    totalQty += x.qty;
   });
-  const averagePrice = totalPrice / fills.length;
+  const averagePrice = totalPrice / totalQty;
   return {
     orderId,
     status: returnStatus,
