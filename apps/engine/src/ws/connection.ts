@@ -1,6 +1,5 @@
 import WebSocket from "ws";
 import { MARKET_PRICES } from "../store/exchange-store";
-import ProcessMarketUpdate from "../utils/market-maker";
 import LiquidationChecker from "../utils/liquidation-checker";
 
 type BINANCE_RAW_DATA = {
@@ -56,7 +55,6 @@ export default function LiveDataFetch() {
     const parsedData: BINANCE_RAW_DATA[] = JSON.parse(messageString);
     parsedData.map((data) => {
       MARKET_PRICES.set(data.s, parseFloat(data.p));
-      ProcessMarketUpdate({ market: data.s, marketPrice: parseFloat(data.p) });
       LiquidationChecker({ market: data.s, marketPrice: parseFloat(data.p) });
     });
   });
