@@ -7,6 +7,8 @@ export type EngineCommandType =
   | "get_open_order"
   | "get_order"
   | "get_fills"
+  | "get_depth"
+  | "get_mark_price"
   | "cancel_order";
 
 export interface EngineRequest {

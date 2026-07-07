@@ -4,10 +4,13 @@ import {
   createOnRamp,
   createOrder,
   getClosedPositions,
+  getDepth,
   getEquity,
   getFills,
+  getMarkPrice,
   getOpenPositions,
   getOrder,
+  openOrders,
 } from "../controllers/exchange.js";
 import { requireAuth } from "../utils/auth.js";
 import { asyncHandler } from "../utils/async-handler.js";
@@ -35,7 +38,13 @@ exchangeRouter.get(
 exchangeRouter.get(
   "/orders/open/:marketId",
   requireAuth,
-  asyncHandler(getOpenPositions),
+  asyncHandler(openOrders),
 );
 exchangeRouter.get("/orders/:orderId", requireAuth, asyncHandler(getOrder));
 exchangeRouter.get("/fills", requireAuth, asyncHandler(getFills));
+exchangeRouter.get("/depth/:marketId", requireAuth, asyncHandler(getDepth));
+exchangeRouter.get(
+  "/price/:marketId",
+  requireAuth,
+  asyncHandler(getMarkPrice),
+);

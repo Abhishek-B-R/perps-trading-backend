@@ -1,3 +1,8 @@
+/**
+ * Exchange engine entry point.
+ * Consumes commands from Redis (INCOMING_QUEUE), executes in-memory matching,
+ * and publishes responses + events back via Redis streams.
+ */
 import "dotenv/config";
 import { createClient } from "redis";
 import { env } from "env";
@@ -11,12 +16,13 @@ import CancelOrder from "./src/helpers/cancel-order.js";
 import LiveDataFetch from "./src/ws/connection.js";
 import {
   GetClosedPositions,
+  GetDepth,
   GetEquity,
+  GetMarkPrice,
   GetOpenPositions,
 } from "./src/helpers/get-endpoints.js";
 import CreateOnRamp from "./src/helpers/create-onramp.js";
 import type { RedisStreamResponse } from "types";
-import ProcessMarketUpdate from "./src/utils/market-maker.js";
 import { ExportToIds } from "./src/utils/market-to-id.js";
 
 const GROUP_NAME = "engine-group";
@@ -31,6 +37,8 @@ export type EngineCommandType =
   | "get_open_order"
   | "get_order"
   | "get_fills"
+  | "get_depth"
+  | "get_mark_price"
   | "cancel_order";
 
 export interface EngineRequest {
@@ -107,6 +115,12 @@ function handleEngineRequest(message: EngineRequest): unknown {
 
     case "get_closed_positions":
       return GetClosedPositions(message.payload as unknown as GetPositionInput);
+
+    case "get_depth":
+      return GetDepth(message.payload as unknown as { marketId: string });
+
+    case "get_mark_price":
+      return GetMarkPrice(message.payload as unknown as { marketId: string });
 
     default:
       throw new Error("Invalid request sent");

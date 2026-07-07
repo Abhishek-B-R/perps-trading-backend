@@ -14,7 +14,7 @@ export const priceParamSchema = z.object({
 
 export const orderBodySchema = z.discriminatedUnion("orderType", [
   z.object({
-    orderType: z.literal(["limit"]),
+    orderType: z.literal("limit"),
     positionType: z.enum(["long", "short"]),
     equity: z.number().positive("orders needs positive equity"),
     market: z.string().trim().min(1, "market name is required"),

@@ -91,11 +91,18 @@ export interface DepthResponse {
   asks: DepthLevel[];
 }
 
+/** In-memory order books keyed by market slug (e.g. "BTC"). */
 export const ORDERBOOKS: Orderbooks = new Map();
+/** In-memory user state: collateral + open positions. Not persisted — rebuilt via onramp. */
 export let USERS = new Map<string, User>();
 
+/** Live mark prices from Binance Futures WS, keyed by symbol (e.g. "BTCUSDT"). */
 export const MARKET_PRICES: Map<string, number> = new Map();
 export const MARKET_WITH_IDS: Map<string, string> = new Map();
+/** DB UUID → market slug (e.g. "SOL") */
+export const MARKET_ID_TO_SLUG: Map<string, string> = new Map();
+/** market slug → DB UUID */
+export const MARKET_SLUG_TO_ID: Map<string, string> = new Map();
 
 export interface IncomingOrderType {
   orderId: string;

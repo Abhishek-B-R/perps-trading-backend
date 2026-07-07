@@ -171,7 +171,7 @@ For `apps/backend/.env`:
 
 ```env
 PORT=3000
-DATABASE_URL=postgresql://USER:PASSWORD@localhost:5432/DATABASE
+DATABASE_URL=postgresql://USER:PASSWORD@localhost:5433/DATABASE
 REDIS_URL=redis://localhost:6379
 JWT_SECRET=replace-this-with-a-real-secret
 ADMIN_SECRET=replace-this-with-an-admin-secret
@@ -189,7 +189,7 @@ INCOMING_QUEUE=backend-to-engine-broker
 For `packages/db/.env`:
 
 ```env
-DATABASE_URL=postgresql://USER:PASSWORD@localhost:5432/DATABASE
+DATABASE_URL=postgresql://USER:PASSWORD@localhost:5433/DATABASE
 ```
 
 `packages/db` needs `DATABASE_URL` when running Prisma commands. The backend also needs `DATABASE_URL` at runtime because it imports the shared Prisma client.

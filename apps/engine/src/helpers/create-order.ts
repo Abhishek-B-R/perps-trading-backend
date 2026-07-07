@@ -11,9 +11,10 @@ import { RemoveFromOrderbook } from "../utils/remove-from-orderbook";
 import { getOrCreateOrderbook, getOrCreateUser } from "./get-or-create";
 import { PlaceIntoOrderbook } from "../utils/place-into-orderbook";
 import { LockFunds, UnlockFunds } from "../utils/lock-unlock-funds";
+import { applyFillPositions } from "./get-endpoints";
 
 export default async function CreateOrder(data: CreateOrderInput) {
-  if (!MARKET_PRICES.has(data.market + "USDT")) {
+  if (!MARKET_PRICES.has(data.market.toUpperCase() + "USDT")) {
     throw new Error("Invalid market data");
   }
   const fills: Fill[] = [];
@@ -83,7 +84,10 @@ export default async function CreateOrder(data: CreateOrderInput) {
         break;
       }
 
-      PlaceIntoOrderbook({ incomingOrder, type: "bid" });
+      PlaceIntoOrderbook({
+        incomingOrder,
+        type: incomingOrder.side === "buy" ? "bid" : "ask",
+      });
       break;
     }
 
@@ -121,9 +125,21 @@ export default async function CreateOrder(data: CreateOrderInput) {
 
           await PublishToPoller("CREATE_FILL", fill);
           fills.push(fill);
+          book.lastTradedPrice = bestPrice;
 
-          // update the filled quantity field in Orders table of db, might have to create a new field
-          // for asker here and then for buyer after this loop ends
+          const takerMargin =
+            (incomingOrder.equity * matchedQuantity) / incomingOrder.qty;
+          const makerMargin =
+            (order.remainingQty > 0 ? order.qty : matchedQuantity) > 0
+              ? takerMargin
+              : takerMargin;
+          applyFillPositions(
+            fill,
+            incomingOrder.positionType,
+            takerMargin,
+            "short",
+            makerMargin,
+          );
 
           const currentOpenOrders = ORDERBOOKS.get(
             incomingOrder.market,
@@ -237,9 +253,21 @@ export default async function CreateOrder(data: CreateOrderInput) {
 
           await PublishToPoller("CREATE_FILL", fill);
           fills.push(fill);
+          book.lastTradedPrice = bestPrice;
 
-          // update the filled quantity field in Orders table of db, might have to create a new field
-          // for asker here and then for buyer after this loop ends
+          const takerMargin =
+            (incomingOrder.equity * matchedQuantity) / incomingOrder.qty;
+          const makerMargin =
+            (order.remainingQty > 0 ? order.qty : matchedQuantity) > 0
+              ? takerMargin
+              : takerMargin;
+          applyFillPositions(
+            fill,
+            incomingOrder.positionType,
+            takerMargin,
+            "long",
+            makerMargin,
+          );
 
           const currentOpenOrders = ORDERBOOKS.get(
             incomingOrder.market,

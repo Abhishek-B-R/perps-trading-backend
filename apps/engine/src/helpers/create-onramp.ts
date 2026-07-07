@@ -1,5 +1,6 @@
-import { USERS } from "../store/exchange-store";
+import { getOrCreateUser } from "./get-or-create";
 
+/** Credits collateral to a user. Creates in-memory user if not yet present. */
 export default function CreateOnRamp({
   userId,
   price,
@@ -7,11 +8,7 @@ export default function CreateOnRamp({
   userId: string;
   price: number;
 }) {
-  const existingUser = USERS.get(userId);
-  if (!existingUser) {
-    throw new Error("user not found");
-  }
-
+  const existingUser = getOrCreateUser(userId);
   existingUser.collateral.available += price;
   return {
     status: "success",

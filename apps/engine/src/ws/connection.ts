@@ -1,5 +1,5 @@
 import WebSocket from "ws";
-import { MARKET_PRICES } from "../store/exchange-store";
+import { MARKET_PRICES, ORDERBOOKS } from "../store/exchange-store";
 import LiquidationChecker from "../utils/liquidation-checker";
 
 type BINANCE_RAW_DATA = {
@@ -54,8 +54,13 @@ export default function LiveDataFetch() {
 
     const parsedData: BINANCE_RAW_DATA[] = JSON.parse(messageString);
     parsedData.map((data) => {
-      MARKET_PRICES.set(data.s, parseFloat(data.p));
-      LiquidationChecker({ market: data.s, marketPrice: parseFloat(data.p) });
+      const price = parseFloat(data.p);
+      MARKET_PRICES.set(data.s, price);
+      // Strip USDT suffix to get market slug for orderbook index price
+      const slug = data.s.replace(/USDT$/i, "");
+      LiquidationChecker({ market: data.s, marketPrice: price });
+      const book = ORDERBOOKS.get(slug);
+      if (book) book.indexPrice = price;
     });
   });
 
