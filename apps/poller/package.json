@@ -16,7 +16,7 @@
   "dependencies": {
     "redis": "^5.12.1",
     "db": "workspace:*",
-    "env": "workspace*",
-    "types": "workspace*"
+    "env": "workspace:*",
+    "types": "workspace:*"
   }
 }

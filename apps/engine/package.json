@@ -16,10 +16,10 @@
   "dependencies": {
     "@types/ws": "^8.18.1",
     "axios": "^1.16.1",
-    "env": "workspace*",
+    "env": "workspace:*",
     "redis": "^5.12.1",
-    "types": "workspace*",
+    "types": "workspace:*",
     "ws": "^8.21.0",
-    "db": "workspace*"
+    "db": "workspace:*"
   }
 }
