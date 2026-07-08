@@ -1,6 +1,8 @@
-import { clientEnv } from "env/client";
-
-export const API_URL = clientEnv.apiUrl;
+// Production: "" → same-origin relative URLs (nginx proxies /markets etc. to backend).
+// Dev: localhost backend. NEXT_PUBLIC_API_URL (baked at build time) overrides both.
+export const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ??
+  (process.env.NODE_ENV === "production" ? "" : "http://localhost:3000");
 
 export interface Market {
   id: string;

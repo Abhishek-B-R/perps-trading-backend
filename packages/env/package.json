@@ -13,7 +13,6 @@
     "dotenv": "^17.4.2"
   },
   "exports": {
-    ".": "./index.ts",
-    "./client": "./client.ts"
+    ".": "./index.ts"
   }
 }
