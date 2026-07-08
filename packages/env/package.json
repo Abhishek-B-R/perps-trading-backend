@@ -9,7 +9,11 @@
   "peerDependencies": {
     "typescript": "^5"
   },
+  "dependencies": {
+    "dotenv": "^17.4.2"
+  },
   "exports": {
-    ".": "./index.ts"
+    ".": "./index.ts",
+    "./client": "./client.ts"
   }
 }

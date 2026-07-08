@@ -3,7 +3,6 @@
  * Consumes commands from Redis (INCOMING_QUEUE), executes in-memory matching,
  * and publishes responses + events back via Redis streams.
  */
-import "dotenv/config";
 import { createClient } from "redis";
 import { env } from "env";
 import type {
