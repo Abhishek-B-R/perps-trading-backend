@@ -43,8 +43,4 @@ exchangeRouter.get(
 exchangeRouter.get("/orders/:orderId", requireAuth, asyncHandler(getOrder));
 exchangeRouter.get("/fills", requireAuth, asyncHandler(getFills));
 exchangeRouter.get("/depth/:marketId", requireAuth, asyncHandler(getDepth));
-exchangeRouter.get(
-  "/price/:marketId",
-  requireAuth,
-  asyncHandler(getMarkPrice),
-);
+exchangeRouter.get("/price/:marketId", requireAuth, asyncHandler(getMarkPrice));
