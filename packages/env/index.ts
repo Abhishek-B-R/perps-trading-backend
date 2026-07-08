@@ -17,6 +17,17 @@ function readEnv(name: string, devDefault: string): string {
   throw new Error(`Missing required env variable: ${name}`);
 }
 
+/** Managed Redis (Upstash etc.) requires TLS — plain redis:// gets the socket
+ *  dropped on handshake, which surfaces as endless "Socket closed unexpectedly". */
+function validateRedisUrl(url: string): string {
+  if (url.includes("upstash.io") && !url.startsWith("rediss://")) {
+    throw new Error(
+      `REDIS_URL points at Upstash but uses "${url.split("://")[0]}://" — use "rediss://" (TLS)`,
+    );
+  }
+  return url;
+}
+
 const port = Number(process.env.PORT?.trim() || "3000");
 const backendQueueId = readEnv(
   "BACKEND_QUEUE_ID",
@@ -29,7 +40,7 @@ export const env = {
     "DATABASE_URL",
     "postgresql://postgres:postgres@localhost:5433/cex",
   ),
-  redisUrl: readEnv("REDIS_URL", "redis://localhost:6379"),
+  redisUrl: validateRedisUrl(readEnv("REDIS_URL", "redis://localhost:6379")),
   jwtSecret: readEnv("JWT_SECRET", "dev-jwt-secret"),
   adminSecret: readEnv("ADMIN_SECRET", "dev-admin-secret"),
   port,
