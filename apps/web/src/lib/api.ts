@@ -1,5 +1,8 @@
+// Production: relative URLs → same origin (nginx proxies /markets etc. to backend).
+// Dev: localhost backend. Override with NEXT_PUBLIC_API_URL if needed.
 export const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000";
+  process.env.NEXT_PUBLIC_API_URL ??
+  (process.env.NODE_ENV === "production" ? "" : "http://localhost:3000");
 
 export interface Market {
   id: string;
