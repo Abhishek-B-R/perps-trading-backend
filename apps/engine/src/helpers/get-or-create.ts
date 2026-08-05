@@ -10,7 +10,7 @@ export function getOrCreateUser(userId: string): User {
   if (!userData) {
     const newuser: User = {
       // create user if doesnt exist
-      collateral: { available: 0, locked: 0 },
+      collateral: { available: 10_000, locked: 0 },
       positions: [],
     };
     USERS.set(userId, newuser);

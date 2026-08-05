@@ -1,8 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Equity } from "@/lib/api";
 import { formatUsd } from "@/lib/format";
+
+const DEFAULT_QTY = "0.01";
+const DEFAULT_MARGIN = "500";
+const FALLBACK_PRICES: Record<string, number> = {
+  BTC: 95_000,
+  ETH: 3_500,
+  SOL: 150,
+  BNB: 600,
+  DOGE: 0.15,
+};
+
+function defaultPrice(symbol: string, markPrice?: number): string {
+  if (markPrice) return String(markPrice);
+  const fallback = FALLBACK_PRICES[symbol];
+  return fallback !== undefined ? String(fallback) : "";
+}
 
 interface Props {
   symbol: string;
@@ -30,14 +46,33 @@ export function TradePanel({
 }: Props) {
   const [side, setSide] = useState<"long" | "short">("long");
   const [orderType, setOrderType] = useState<"limit" | "market">("limit");
-  const [qty, setQty] = useState("");
-  const [price, setPrice] = useState("");
-  const [margin, setMargin] = useState("");
+  const [qty, setQty] = useState(DEFAULT_QTY);
+  const [price, setPrice] = useState(() => defaultPrice(symbol, markPrice));
+  const [margin, setMargin] = useState(DEFAULT_MARGIN);
   const [slippage, setSlippage] = useState("1");
   const [depositAmt, setDepositAmt] = useState("");
   const [showDeposit, setShowDeposit] = useState(false);
+  const skipPriceSync = useRef(false);
 
   const isLong = side === "long";
+
+  useEffect(() => {
+    if (skipPriceSync.current || !markPrice) return;
+    setPrice((p) => {
+      const fallback = FALLBACK_PRICES[symbol];
+      if (!p || (fallback !== undefined && p === String(fallback))) {
+        return String(markPrice);
+      }
+      return p;
+    });
+  }, [markPrice, symbol]);
+
+  function handleReset() {
+    skipPriceSync.current = true;
+    setQty("");
+    setPrice("");
+    setMargin("");
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -135,15 +170,24 @@ export function TradePanel({
           suffix="USDT"
         />
 
-        <button
-          type="submit"
-          disabled={loading}
-          className={`mt-auto rounded py-3 text-sm font-bold transition-opacity disabled:opacity-50 ${
-            isLong ? "bg-long text-black" : "bg-short text-white"
-          }`}
-        >
-          {loading ? "Placing…" : `${isLong ? "Buy" : "Sell"} ${symbol}`}
-        </button>
+        <div className="mt-auto flex gap-2">
+          <button
+            type="button"
+            onClick={handleReset}
+            className="rounded border border-border px-4 py-3 text-sm text-muted hover:text-text"
+          >
+            Reset
+          </button>
+          <button
+            type="submit"
+            disabled={loading}
+            className={`flex-1 rounded py-3 text-sm font-bold transition-opacity disabled:opacity-50 ${
+              isLong ? "bg-long text-black" : "bg-short text-white"
+            }`}
+          >
+            {loading ? "Placing…" : `${isLong ? "Buy" : "Sell"} ${symbol}`}
+          </button>
+        </div>
       </form>
 
       <div className="border-t border-border p-3">

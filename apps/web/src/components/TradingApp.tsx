@@ -272,6 +272,7 @@ export function TradingApp() {
         {/* Trade panel */}
         <section className="row-span-2 bg-surface">
           <TradePanel
+            key={symbol}
             symbol={symbol}
             equity={equity}
             markPrice={markData?.markPrice ?? ticker?.lastPrice}
